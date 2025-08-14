@@ -2,7 +2,7 @@
 
 This document covers some of the ways in which Sundial is designed to scale as needed to ensure a fast & unobtrusive UX.
 
-# L2 Scaling - Rapid Block Production
+# L2 Scaling - Transaction Processing
 
 The Sundial L2 has technically infinite TPS. This is made possible by using a rotating consensus algorithm in which node operators do not need to interact directly to produce blocks. This allows each operator to commit as many blocks in their shift as they wish. The upper limit is simply the operators hardware.
 
@@ -15,7 +15,7 @@ There are 2 ways in which this is intended to be scaled. If we treat the data as
 
 The block headers that operators publish in the state queue are of constant size.
 
-![Block Header](image.png)
+![Block Header](blockheader.png)
 
 This means we can increase the block size, which in turn increases the _flow volume_ of data that can be processed in parallel, allowing for greater throughput without any additional onchain cost.
 

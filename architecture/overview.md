@@ -22,22 +22,21 @@ Sundial is built with the Midgard L2 Framework, which is a set of tools and libr
 
 - **Data Archive**: A decentralized, data-duplicated service that stores historical data for the protocol, allowing users to access past transactions and states.
 - **Data Availability (DA) Layer**: This layer ensures that the data needed for Sundial to operate is securely stored and accessible. It is likely to be implemented on Cardano, leveraging its robust infrastructure.
--
 
 ## SL3: Data Layer
 
-The Data Layer has 2 main services:
+The Data Layer has 3 main services:
 
-- **Indexers** provide a way to index and query data from the protocol, allowing users to access historical data and perform analytics.
+- **Indexers** provide a way to index and query data from the protocol, allowing users to access historical data and perform analytics. They also should provide a way to view the upcoming block producers, enabling wallets to intelligently broadcast their transactions to the relevant operators. (Assuming a VRF rotation instead of round-robin.)
 - **Security Services** provide a way to ensure the security of the protocol, including fraud detection and prevention mechanisms. These services are designed to be modular and extensible, allowing for future enhancements and integrations.
 
 ## SL4: Construction Layer
 
 The Construction Layer provides a set of tools and libraries for building applications on top of the Sundial protocol. It includes the following services:
 
-- Offchain Specifications: A set of specifications that define how applications can construct transactions and interact with the protocol. These are intended to be backwards compatible with Cardano's CIP-30 wallet standard, allowing for easy integration with existing wallets and applications.
-- Wallet Specifications: A set of specifications that define how wallets can interact with the protocol, including transaction construction and signing. This includes specifications for interacting with both the Bitcoin and Cardano networks, as well as the Sundial L2.
-- Shared Liquidity Pools: A set of liquidity pools that can be used by applications to provide liquidity for their transactions. The initial design includes pools for stablecoins, wrapped bitcoin, and native Ada.
+- **Offchain Specifications**: A set of specifications that define how applications can construct transactions and interact with the protocol. These are intended to be backwards compatible with Cardano's CIP-30 wallet standard, allowing for easy integration with existing wallets and applications.
+- **Wallet Specifications**: A set of specifications that define how wallets can interact with the protocol, including transaction construction and signing. This includes specifications for interacting with both the Bitcoin and Cardano networks, as well as the Sundial L2.
+- **Shared Liquidity Pools**: A set of liquidity pools that can be used by applications to provide liquidity for their transactions. The initial design includes pools for stablecoins, wrapped bitcoin, and native Ada.
 
 ## SL5: Function Layer
 
