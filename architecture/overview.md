@@ -6,6 +6,95 @@ The architecture of Sundial is divided into 7 layers, the first 2 of which are t
 
 This document provides an overview of the architecture, including the key services and their interactions. The architecture is designed to be modular and extensible, allowing for future enhancements and integrations.
 
+## Incentive System Overview
+
+```mermaid
+graph TB
+    subgraph "Protocol Treasury"
+        TR[Protocol Treasury]
+        FR[Fee Revenue]
+        YR[Yield Revenue]
+        BR[Bridge Revenue]
+    end
+    
+    subgraph "Operators (Staked)"
+        BP[Block Producers]
+        BO[Bridge Operators]
+    end
+    
+    subgraph "Watchers (Competitive)"
+        PR[Provers]
+        CA[Canaries]
+        AR[Archivists]
+        FA[Facilitators]
+    end
+    
+    subgraph "Liquidity Providers"
+        LP[LP Participants]
+        YI[Yield Instruments]
+    end
+    
+    subgraph "Users"
+        US[End Users]
+    end
+    
+    subgraph "Penalty System"
+        SL[Slashing]
+        FP[Fraud Penalties]
+    end
+    
+    %% Revenue Flow
+    US -->|Transaction Fees| FR
+    US -->|Bridge Fees| BR
+    LP -->|Yield Generation| YR
+    FR --> TR
+    BR --> TR
+    YR --> TR
+    
+    %% Operator Incentives
+    TR -->|Block Rewards| BP
+    TR -->|Bridge Fees Share| BO
+    BP -->|Stake Deposit| BP
+    BO -->|Stake Deposit| BO
+    
+    %% Watcher Incentives
+    TR -->|Fraud Bounties| PR
+    TR -->|Issue Bounties| CA
+    TR -->|Data Bounties| AR
+    TR -->|Facilitation Fees| FA
+    
+    %% Liquidity Provider Incentives
+    YI -->|Yield Returns| LP
+    TR -->|LP Rewards| LP
+    
+    %% Penalty Flow
+    BP -->|Slashed Stake| SL
+    BO -->|Slashed Stake| SL
+    SL -->|Redistributed| TR
+    PR -->|Fraud Detection| FP
+    FP -->|Penalty Revenue| TR
+    
+    %% User Benefits
+    TR -->|Protocol Improvements| US
+    LP -->|Liquidity| US
+    BP -->|Fast Transactions| US
+    BO -->|Cross-chain Access| US
+    
+    classDef operator fill:#e1f5fe,stroke:#01579b
+    classDef watcher fill:#f3e5f5,stroke:#4a148c
+    classDef liquidity fill:#e8f5e8,stroke:#1b5e20
+    classDef user fill:#fff3e0,stroke:#e65100
+    classDef treasury fill:#fce4ec,stroke:#880e4f
+    classDef penalty fill:#ffebee,stroke:#b71c1c
+    
+    class BP,BO operator
+    class PR,CA,AR,FA watcher
+    class LP,YI liquidity
+    class US user
+    class TR,FR,YR,BR treasury
+    class SL,FP penalty
+```
+
 ## L1: Cardano
 
 Layer 1 is the Cardano blockchain, which provides the foundational layer for Sundial. It was selected because the Cardano blockchain is known for its security, scalability, and sustainability.
