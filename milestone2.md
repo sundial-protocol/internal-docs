@@ -7,7 +7,7 @@ In `architecture/scaling.md`, we talk about
 - increased operator commitment to enhance tx flow velocity
 - use of watchers to facilitate movement between chains in a trustless custodial manner
 
-### Advanced mempool management for predictable execution
+## Advanced mempool management for predictable execution
 
 In `architecture/roles/watchers.md` we discuss the decentralized network of Facilitators that will be incentivized to monitor the network and ensure that transactions are processed in a timely and efficient manner. This will help ensure transactions are executed as rapidly as possible without the need for a centralized mempool.
 
@@ -15,7 +15,7 @@ In `architecture/roles/watchers.md` we discuss the decentralized network of Faci
 
 In `architecture/roles/roles.md` we discuss the different incentivization models we have in mind for ensuring community members have an appropriate risk/reward ratio.
 
-We also elaborate on this in `architecture/roles/watchers.md` and `architecture/roles/operators.md`. TODO
+We also elaborate on this in `architecture/roles/watchers.md` and `architecture/roles/operators.md`.
 
 ## Scalable infrastructure designed for growing demand
 

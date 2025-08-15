@@ -18,7 +18,7 @@ Bridge Operation requires watching both the Cardano L1 and the Bitcoin L1, as we
 
 ## Watchers
 
-Watchers have a reactive role in the protocol, facilitating (or counteracting) the actions of other users to enable a smoother, more secure experience.
+Watchers have a reactive role in the protocol, facilitating (or counteracting in the case of Provers) the actions of other users to enable a smoother, more secure experience.
 
 Watchers are incentivized to take on tasks, but are not specifically incorporated into the protocol. They must compete for rewards against other watchers.
 
@@ -27,8 +27,13 @@ Watchers are incentivized to take on tasks, but are not specifically incorporate
 ### Facilitators (SL5)
 
 ### Canaries (L1-SL5)
+Canaries are a type of watcher that monitor the L2 directly for fraud and other issues. They are not required to stake any collateral, but they are incentivized to report any issues they find.
+
+They play a crucial role in maintaining the integrity of the network by providing the first line of defense against fraud and other malicious activities.
 
 ### Archivists (L2)
+Archivists are responsible for maintaining the integrity of the data stored in the protocol. They ensure that historical data is accurately recorded and accessible, providing a reliable source of information for users and other services.
+[REVIEW - should this be an Operator role?]
 
 ## Liquidity Providers (SL4)
 
