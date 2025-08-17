@@ -22,7 +22,7 @@ Because of the deterministic nature of the protocol, the malicious operator take
 
 In addition, we include a service that monitors operator performance and provides feedback on their activities. This helps to ensure that operators are held accountable for their actions and that they are incentivized to act in the best interests of the network.
 
-If the operators fail to meet the required standards, they may be penalized by being temporarily suspended from the network. [REVIEW] This helps to maintain a high level of performance and reliability within the operator community.
+If the operators fail to meet the required standards, they may be penalized by being temporarily suspended from the network. This helps to maintain a high level of performance and reliability within the operator community.
 
 ## Bridge Operators
 
