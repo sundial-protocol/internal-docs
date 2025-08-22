@@ -1,19 +1,23 @@
 # Sundial Watcher Toolkit
+
 The Sundial Watcher Toolkit is a comprehensive set of tools and resources designed to empower users to set up and manage their own watcher services within the Sundial protocol. These tools should follow a set of standards that ensure interoperability between different watcher implementations, allowing for a diverse and resilient watcher ecosystem.
 
 There are 4 types of watcher roles available:
+
 - Provers
 - Archivists
 - Facilitators
 - Canaries
 
 ## Provers
+
 Provers watch the state queue & data availability layer (DAL) for invalid transactions or blocks. If they detect any issues, they can submit a proof to the appropriate on-chain contract and claim the block producer's deposit as a reward.
 
 For each type of Fraud Proof (listed below), the prover service should do the following as a self contained service without user intervention:
+
 - Monitor the state queue & DAL for the specific condition
 - Generate the necessary proof data
-- Submit the proof to the correct on-chain contract 
+- Submit the proof to the correct on-chain contract
 - Submit subsequent transactions to continue the proof process
 - Terminate the proof process if interrupted (i.e. some error occurs)
 - Claim the reward if the proof is successful
@@ -55,24 +59,21 @@ A modular example implementation will be provided as part of this toolkit, ready
   - **TRANSACTION-NETWORK**: A transaction 𝑡 has the wrong network id.
 - Reference Inputs
   - **NO-REFERENCE-INPUT**: A transaction 𝑡 attempted to reference the input 𝑖 that does not exist or was spent in a previous block.
-  - **REFERENCE-INPUT-NO-IDX**: A  transaction 𝑡 attempted to spend an input 𝑖 that was not produced by the transaction matching
-the tx hash of 𝑖.
-
+  - **REFERENCE-INPUT-NO-IDX**: A transaction 𝑡 attempted to spend an input 𝑖 that was not produced by the transaction matching
+    the tx hash of 𝑖.
 
 ## Archivists
 
 Sundial's archive nodes will store the block data for confirmed blocks. Security properties are easier to achieve for this historical data because, at all times, Sundial's confirmed state utxo contains a chained header hash that pins the entire historical chain of confirmed blocks. There can be no disagreement about different versions of this data—an archive node either stores data that corresponds to the confirmed state header hash, or it does not.
 
-Anyone can choose to run an archive node; however we expect most L2 operators
-will run archive nodes as this will allow them to more quickly construct blocks with transactions that depend on historical data, we also expect most subscription-service indexers to run their own archive node, as this will allow them to more quickly and reliably provide access to historical data to their users.
+Anyone can choose to run an archive node; however we expect most L2 operators will run archive nodes as this will allow them to more quickly construct blocks with transactions that depend on historical data, we also expect most subscription-service indexers to run their own archive node, as this will allow them to more quickly and reliably provide access to historical data to their users.
 
 As such, an Archive Node implementation will be provided as part of this toolkit and part of the Operator, ready to either be deployed as-is, or used as a reference for building a custom implementation.
 
-Archivists will be incentivized to store data based on the availability of the data and the demand for it. They will be able to charge fees for accessing their data, allowing them to earn a profit while still providing a valuable service to the network.
+### Archive API
 
 Archive nodes are very simple in terms of interaction - they provide a straightforward API for accessing historical blocks - both header & body, and leave the interpretation of that data to the data layer (indexers/wallets/canaries).
 
-### Archive API
 - `GET /block/{blockHeight}`: Retrieve the full block (header + body) at the specified height.
 - `GET /block/{blockHeight}/header`: Retrieve only the block header at the specified height.
 - `GET /block/{blockHeight}/body`: Retrieve only the block body at the specified height.
@@ -84,23 +85,58 @@ Archive nodes are very simple in terms of interaction - they provide a straightf
 
 ## Facilitators
 
-Facilitators are responsible for monitoring the network for accelerated deposits/withdrawals. They act as voluntary intermediaries, helping to coordinate transactions more swiftly in return for a fee.
+Facilitators are responsible for assisting users with accelerated deposits/withdrawals. They act as voluntary intermediaries, helping to coordinate transactions more swiftly in return for a fee.
 
-To do this, they interact with a reverse-auction settlement market, where users can broadcast their intent to deposit/withdraw quickly, and facilitators can bid to fulfill that request for a fee.
+To do this, they first register on a facilitator registry, where users can view available facilitators and the fees they charge. Once a facilitator is selected, they coordinate the deposit/withdrawal process by releasing funds on the target chain from their own liquidity pool, and then waiting to receive the funds from the withdrawal submitted by the user.
 
-Once a facilitator wins a bid, they coordinate the deposit/withdrawal process by releasing funds on the target chain from their own liquidity pool, and then settling the transaction on the source chain once the user has confirmed receipt of funds.
+Facilitators may reference withdrawal transactions they facilitated to contribute to a verifiable onchain record included in the facilitator registry.
 
-### Reverse-Auction Settlement Market
+This toolkit will include a simple set of offchain endpoints for interacting with the settlement market as a facilitator - registering & referencing withdrawals.
 
-When a user wants to make an accelerated deposit/withdrawal, they publish their transaction to the settlement market, including specific details about their requirements, such as their maximum acceptable fee.
+```Typescript
+export const FacilitatorEndpoints = S.Struct({
+  register: S.Function(
+    S.Struct({
+      fee: S.Number,
+      receiptAddress: S.L1Address | S.L2Address,
+      lpAddress: S.L1Address | S.L2Address,
+      credential: S.String
+    }),
+    S.Void
+  ),
+  unregister: S.Function(
+    S.Struct({
+      receiptAddress: S.L1Address | S.L2Address,
+      credential: S.String
+    }),
+    S.Void
+  ),
+  updateRegistration: S.Function(
+    S.Struct({
+      fee: S.Number,
+      receiptAddress: S.L1Address | S.L2Address,
+      lpAddress: S.L1Address | S.L2Address,
+      credential: S.String
+    }),
+    S.Void
+  ),
+  referenceWithdrawals: S.Function(
+    S.Array(
+      S.Struct({
+        transactionHash: S.String,
+        value: S.Number,
+        endUser: S.L1Address | S.L2Address
+      }),
+      S.Void
+    ),
+  ),
+});
 
-Facilitators monitor the settlement market for new transactions and can submit bids to fulfill the request. Each bid includes the fee they are willing to accept for facilitating the transaction.
+```
 
-Once the bidding period ends the winning bid is selected based on the lowest fee that meets the user's requirements. The facilitator who submitted the winning bid is then responsible for coordinating the transaction through the Transaction Release Protocol.
+A separate Sundial Protocol Improvement Proposal will also provide an opt-in standard for indicating further information about withdrawal statistics to offchain observers, built in collaboration with early adopters.
 
-### Transaction Release Protocol
-
-TODO
+Finally the toolkit will include a ready-to-deploy reference implementation that demonstrates how facilitators can interact with these endpoints.
 
 ## Canaries
 
@@ -109,12 +145,10 @@ Canaries have a broader role in monitoring the L2 for any issues, including frau
 This is a job that can be accomplished through a variety of methods, so the toolkit will provide a series of exposed APIs in other parts of the protocol that can be easily consumed to build a custom canary service.
 
 ### Observation APIs
+
 - **Archive Node API**: Canaries can use the Archive API to access historical block data for analysis.
 - **Indexers**: Canaries can use Indexers' provided APIs to monitor the state queue, settlement queue, DAL and scheduler for new blocks and transactions to analyze them in real-time.
 - **Layer Node API**: Canaries can interact with the Layer Node directly to access the internal state and monitor for any discrepancies or anomalies.
 - **Custom APIs**: Canaries can also work with other network participants to implement their own APIs to gather specific data or insights tailored to their needs.
 
 We are working with partners to develop the first canaries on Sundial, and will expose these APIs as part of the toolkit once they're ready.
-
-Reference:
-https://github.com/intersectmbo/cardano-node/blob/master/cardano-tracer/docs/cardano-tracer.md

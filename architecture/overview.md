@@ -52,7 +52,7 @@ The Routing Layer provides a set of smart services that interprets and prepares 
 
 - **Bridging Services**: These services will facilitate user interactions with the bridges, allowing them to move assets between Bitcoin and Cardano networks seamlessly. It will also monitor the status of the bridges and provide users with real-time information about their transactions.
 - **Staking Services**: These services will allow users to stake their assets in the protocol, earning rewards for participating in the network. They will be designed to be easy to use and secure, allowing users to stake their assets without having to manage complex strategies.
-- **Settlement Market**: This service will provide a marketplace for users to settle their transactions, allowing them to find their ideal balance between speed & cost for their deposits & withdrawals. It will be designed to be secure and easy to use, allowing users to settle their transactions quickly and efficiently.
+- **Facilitator Registry**: This registry will provide a way for facilitators to register their services, allowing users to discover and interact with them easily. It will include information about each facilitator's fees, supported networks, and other relevant details.
 
 ## SL7: User Layer
 
