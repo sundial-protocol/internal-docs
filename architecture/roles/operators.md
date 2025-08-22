@@ -2,7 +2,7 @@
 
 Operators are the backbone of the Sundial protocol, responsible for maintaining the network's integrity and performance. They play a crucial role in ensuring that transactions are processed efficiently and securely.
 
-## L2 Operators
+## Layer Operators (Block Producers)
 
 ### Responsibilities
 
@@ -23,6 +23,9 @@ Because of the deterministic nature of the protocol, the malicious operator take
 In addition, we include a service that monitors operator performance and provides feedback on their activities. This helps to ensure that operators are held accountable for their actions and that they are incentivized to act in the best interests of the network.
 
 If the operators fail to meet the required standards, they may be penalized by being temporarily suspended from the network. This helps to maintain a high level of performance and reliability within the operator community.
+
+### Tooling
+To support operators in their roles, we provide a comprehensive toolkit. Information on the operator toolkit can be found [here](../layers/SL7/operator-toolkit.md).
 
 ## Bridge Operators
 

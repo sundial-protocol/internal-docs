@@ -11,6 +11,11 @@ There are 4 types of watcher roles available. Each of these have similar require
 
 Incentivization will be calculated with the expectation that watchers fill all 4 roles, with the caveat that for each role the incentives to participate must be strong enough that a watcher participating in any of the other 3 watcher roles will profit by filling the new role as well. By this mechanism we can ensure that watchers are incentivized to take on all roles, while still allowing them to choose which roles they want to focus on.
 
+## Tooling
+To support watchers in their roles, we provide a comprehensive watcher toolkit. Information on the watcher toolkit can be found [here](../layers/SL7/watcher-toolkit.md).
+
+## Types of Watchers
+
 ### Provers (L1-SL3)
 
 Provers are responsible for verifying the state of the blockchain and ensuring that transactions are valid. They play a crucial role in maintaining the integrity of the network by watching for any discrepancies or malicious activity.
