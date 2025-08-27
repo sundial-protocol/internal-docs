@@ -1,0 +1,1 @@
+This directory contains reports created externally from technical documentation, but which are still relevant to the technical details of the Sundial protocol.
