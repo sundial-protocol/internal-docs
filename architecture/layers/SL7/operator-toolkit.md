@@ -15,69 +15,7 @@ For each type of operator node, the toolkit includes AT LEAST:
 
 ## Sundial-Layer-Node
 
-### CLI Commands
-
-The Command-Line Interface (CLI) tools for managing operator services within the Sundial protocol. These provide a range of commands for deploying, configuring, monitoring, and maintaining operator nodes.
-
-Planned commands include:
-
-```
-  --topology FILEPATH      The path to a file describing the topology.
-  --database-path FILEPATH Directory where the state is stored.
-  --immutable-database-path FILEPATH
-                           Directory where the state is stored.
-  --volatile-database-path FILEPATH
-                           Directory where the state is stored.
-  --validate-db            Validate all on-disk database files
-  --socket-path FILEPATH   Path to a sundial-layer-node socket
-  --watcher-socket-path-accept FILEPATH
-                           Accept incoming watcher connection at local
-                           socket
-  --watcher-socket-path-connect FILEPATH
-                           Connect to watcher listening on a local socket
-  --bridge-socket-path-accept FILEPATH
-                           Accept incoming sundial-bridge-node connection at local
-                           socket
-  --bridge-socket-path-connect FILEPATH
-                           Connect to sundial-bridge-node listening on a local socket
-  --config NODE-CONFIGURATION
-                           Configuration file for the sundial-layer-node
-  --non-producing-node     Start the node as a non block producing node even if
-                           credentials are specified.
-  --host-addr IPV4         An optional IPv4 address
-  --host-ipv6-addr IPV6    An optional IPv6 address
-  --port PORT              The port number
-  --logs                   Path to the log files
-  --status                 Show status & performance metrics
-  -h,--help                Show this help text
-```
-
-### Configuration
-
-When configuring a Layer node, a JSON file is expected which satisfies the following pattern:
-
-```Typescript
-export const LayerNodeConfig = S.Struct({
-  // Node configuration
-  node: S.Struct({
-    endpoint: S.String.pipe(S.pattern(/^https?:\/\/.+/)),
-  }),
-
-  // Transaction generator configuration
-  generator: S.Struct({
-    enabled: S.Boolean,
-    maxConcurrent: S.Number.pipe(S.positive(), S.int()),
-    batchSize: S.Number.pipe(S.positive(), S.int()),
-    intervalMs: S.Number.pipe(S.positive(), S.int()),
-  }),
-
-  // Logging configuration
-  logging: S.Struct({
-    level: S.Literal('debug', 'info', 'warn', 'error'),
-    format: S.Literal('json', 'pretty'),
-  }),
-});
-```
+Read more at [Sundial Layer CLI Specification](./layer-operator-cli.md).
 
 ## Sundial-Bridge-Node
 
