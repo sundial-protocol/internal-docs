@@ -56,6 +56,7 @@ The following equation determines the minimum fee structure required for facilit
 
 $$
 \mathbb{E}[Payout_{Fa}] = \lambda_{tx} \cdot (UserFee - TxFee) - C_{operation} - C_{capital}
+$$
 
 Where:
 
