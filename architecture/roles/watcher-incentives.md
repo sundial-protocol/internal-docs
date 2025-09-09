@@ -73,9 +73,7 @@ $$(TxFee + C_{operation} + C_{capital}) $$ represents total operational costs, n
 
 
 $$
-
 \mathbb{E}[Payout_{Fa}] > 0
-
 $$
 
 ## Canary Incentives
@@ -88,9 +86,7 @@ The following equation describes the expected minimum fee structure required for
 
 
 $$
-
-\mathbb{E}[Payout_{Ca}] = \lambda*{sub} \cdot Fee - C*{operation}
-
+\mathbb{E}[Payout_{Ca}] = \lambda_{sub} \cdot Fee - C_{operation}
 $$
 
 Where:
@@ -105,9 +101,7 @@ $$(\lambda_{sub} \cdot Fee) $$ represents the average earnings from subscription
 
 
 $$
-
 \mathbb{E}[Payout_{Ca}] > 0
-
 $$
 
 ## Archivist Incentives
@@ -120,9 +114,7 @@ The following equation describes the expected minimum fee structure required for
 
 
 $$
-
-\mathbb{E}[Payout_{Ar}] = \lambda*{access} \cdot Fee - C*{operation} - C\_{capital}
-
+\mathbb{E}[Payout_{Ar}] = \lambda_{access} \cdot Fee - C_{operation} - C\_{capital}
 $$
 
 Where:
@@ -139,9 +131,7 @@ $$(C_{operation} + C_{capital}) $$ represents total costs
 
 
 $$
-
 \mathbb{E}[Payout_{Ar}] > 0
-
 $$
 
 ## Combined Incentives
@@ -150,22 +140,17 @@ To ensure that running all watcher roles in tandem is economically viable, the c
 
 
 $$
-
-\mathbb{E}[Payout_{Total}] = \mathbb{E}[Payout_{Pr}] + \mathbb{E}[Payout_{Fa}] + \mathbb{E}[Payout_{Ca}] + \mathbb{E}[Payout_{Ar}] - C\_{core\_operation} - C\_{core\_capital}
-
+\mathbb{E}[Payout_{Total}] = \mathbb{E}[Payout_{Pr}] + \mathbb{E}[Payout_{Fa}] + \mathbb{E}[Payout_{Ca}] + \mathbb{E}[Payout_{Ar}] - C\_{operation} - C\_{capital}
 $$
 
 Where:
 
-- $$C_{core\_operation}$$ = Cost of running the core watcher service
-- $$C_{core\_capital}$$ = Cost of capital for the core watcher service
+- $$C_{operation}$$ = Cost of running the core watcher service
+- $$C_{capital}$$ = Cost of capital for the core watcher service
 
 **Condition for overall sustainability:**
 
 
 $$
-
 \mathbb{E}[Payout_{Total}] > 0
-
-$$
 $$
