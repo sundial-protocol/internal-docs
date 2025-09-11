@@ -6,22 +6,25 @@ Layer Operators (Block Producers) are incentivized through a combination of:
 
 - **Staking rewards** for processing transactions and maintaining network health.
 - **Collateral requirements**: Operators must stake capital as collateral, which can be slashed for malicious behavior or poor performance.
-- **Penalties**: Operators risk losing their collateral or being suspended for protocol violations.
+- **Penalties**: Operators risk losing their collateral and being suspended for protocol violations.
 
 ### Equations
 
 The following equation determines the expected payout for a Layer Operator:
 
 $$
-\mathbb{E}[Payout_{LO}] = Reward_{block} - Penalty_{misbehavior} - C_{operation} - C_{capital}
+\mathbb{E}[Payout_{LO}] =  (\lambda_{tx} \cdot TxFee \cdot \tau_{rotation} / N_{operators}) - (Collateral_{btc} \cdot C_{opportunity}) - C_{operation}
 $$
 
 Where:
-
-- $$Reward_{block}$$ = Block reward for processing transactions
-- $$Penalty_{misbehavior}$$ = Penalties for protocol violations
+- $$\lambda_{tx}$$ = Expected number of transactions processed
+- $$TxFee$$ = Average gas fee per transaction sent to block
+- $$\tau_{rotation}$$ = Operation window for block production
+- $$N_{operators}$$ = Number of layer operators actively participating
+- $$Collateral_{btc}$$ = Amount of BTC locked to participate
+- $$C_{opportunity}$$ = Opportunity cost of locked collateral
 - $$C_{operation}$$ = Cost of operating a node
-- $$C_{capital}$$ = Cost of staked collateral
+
 
 **Condition for sustainability:**
 
@@ -211,7 +214,7 @@ Archivists are incentivized through fees charged for accessing historical data. 
 The following equation describes the expected minimum fee structure required for archivists:
 
 $$
-\mathbb{E}[Payout_{Ar}] = \lambda_{access} \cdot Fee - C_{operation} - C\_{capital}
+\mathbb{E}[Payout_{Ar}] = \lambda_{access} \cdot Fee - C_{operation}
 $$
 
 Where:
