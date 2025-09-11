@@ -22,7 +22,7 @@ Where:
 - $$\tau_{rotation}$$ = Operation window for block production
 - $$N_{operators}$$ = Number of layer operators actively participating
 - $$Collateral_{btc}$$ = Amount of BTC locked to participate
-- $$C_{operation}$$ = Opportunity cost of locked collateral
+- $$C_{opportunity}$$ = Opportunity cost of locked collateral
 - $$C_{operation}$$ = Cost of operating a node
 
 
