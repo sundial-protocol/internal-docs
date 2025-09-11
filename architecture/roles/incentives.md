@@ -1,3 +1,104 @@
+# Operator Incentives
+
+## Layer Operator Incentives
+
+Layer Operators (Block Producers) are incentivized through a combination of:
+
+- **Staking rewards** for processing transactions and maintaining network health.
+- **Collateral requirements**: Operators must stake capital as collateral, which can be slashed for malicious behavior or poor performance.
+- **Penalties**: Operators risk losing their collateral or being suspended for protocol violations.
+
+### Equations
+
+The following equation determines the expected payout for a Layer Operator:
+
+$$
+\mathbb{E}[Payout_{LO}] = Reward_{block} - Penalty_{misbehavior} - C_{operation} - C_{capital}
+$$
+
+Where:
+
+- $$Reward_{block}$$ = Block reward for processing transactions
+- $$Penalty_{misbehavior}$$ = Penalties for protocol violations
+- $$C_{operation}$$ = Cost of operating a node
+- $$C_{capital}$$ = Cost of staked collateral
+
+**Condition for sustainability:**
+
+$$
+\mathbb{E}[Payout_{LO}] > 0
+$$
+
+## Bridge Operator Incentives
+
+We allow for flexibility in the fee structure for bridge operators, as the fees that may be charged by bridge operators changes based on the bridge and type of asset being bridged.
+
+In order to account for this we include the Bridging Service, which helps support users in finding and using the best bridge for their needs.
+
+### Cardinal Operator Incentives
+
+Cardinal Operators are incentivized through:
+
+- **Transaction fees** for facilitating cross-chain operations (lock, mint, burn, release).
+- **Adaptive fee bidding**: Operators can adjust fees based on network conditions.
+- **Fraud-proof rewards**: Operators may earn additional rewards for successfully participating in BitVMX dispute resolution.
+- **Penalties**: Operators who fail to maintain uptime, security, or correctness may lose their role or face penalties.
+
+### Equations
+
+The following equation determines the expected payout for a Cardinal Operator:
+
+$$
+\mathbb{E}[Payout_{CO}] = \lambda_{tx} \cdot Fee_{tx} + Reward_{fraudproof} - Penalty_{misbehavior} - C_{operation} - C_{capital}
+$$
+
+Where:
+
+- $$\lambda_{tx}$$ = Expected number of cross-chain transactions
+- $$Fee_{tx}$$ = Average fee per transaction
+- $$Reward_{fraudproof}$$ = Rewards from successful fraud-proof participation
+- $$Penalty_{misbehavior}$$ = Penalties for protocol violations
+- $$C_{operation}$$ = Cost of operating as a Cardinal Operator
+- $$C_{capital}$$ = Cost of required infrastructure
+
+**Condition for sustainability:**
+
+$$
+\mathbb{E}[Payout_{CO}] > 0
+$$
+
+### Charms Operator Incentives
+
+Charms Operators (Bitcoin Oracle Operators) are incentivized through:
+
+- **Attestation fees** for providing accurate and timely oracle data (block inclusion, confirmations, Merkle proofs).
+- **Redundancy rewards**: Multi-operator setups can increase reliability and share fees.
+- **Optional signature rewards**: Operators may charge extra for signed attestations.
+- **Penalties**: Poor availability, incorrect data, or slow response may result in loss of reputation or removal from the operator set.
+
+### Equations
+
+The following equation determines the expected payout for a Charms Operator:
+
+$$
+\mathbb{E}[Payout_{ChO}] = \lambda_{attest} \cdot Fee_{attest} + Reward_{redundancy} + Reward_{signature} - Penalty_{misbehavior} - C_{operation}
+$$
+
+Where:
+
+- $$\lambda_{attest}$$ = Expected number of attestations provided
+- $$Fee_{attest}$$ = Average fee per attestation
+- $$Reward_{redundancy}$$ = Additional rewards for redundancy
+- $$Reward_{signature}$$ = Additional rewards for signed attestations
+- $$Penalty_{misbehavior}$$ = Penalties for incorrect or late data
+- $$C_{operation}$$ = Cost of operating as a Charms Operator
+
+**Condition for sustainability:**
+
+$$
+\mathbb{E}[Payout_{ChO}] > 0
+$$
+
 # Watcher Incentives
 
 Each of the 4 watcher roles has different incentives and cost structures. Below is an outline of the incentives for each role. The constraints on these incentive systems come from practicalities:
@@ -67,10 +168,9 @@ Where:
 - $$C_{capital}$$ = Cost of setting up a facilitator
 
 $$(\lambda_{tx} \cdot UserFee - TxFee) $$ represents the average earnings from facilitation over time.
-$$(TxFee + C_{operation} + C_{capital}) $$ represents total operational costs, not including gas fees.
+$$(TxFee + C*{operation} + C*{capital}) $$ represents total operational costs, not including gas fees.
 
 **Condition for sustainability:**
-
 
 $$
 \mathbb{E}[Payout_{Fa}] > 0
@@ -83,7 +183,6 @@ Canaries are incentivized through fees charged for their monitoring services. Th
 ### Equations
 
 The following equation describes the expected minimum fee structure required for canaries. Canaries are free to choose their own monetization strategy as desired.
-
 
 $$
 \mathbb{E}[Payout_{Ca}] = \lambda_{sub} \cdot Fee - C_{operation}
@@ -99,7 +198,6 @@ $$(\lambda_{sub} \cdot Fee) $$ represents the average earnings from subscription
 
 **Condition for sustainability:**
 
-
 $$
 \mathbb{E}[Payout_{Ca}] > 0
 $$
@@ -111,7 +209,6 @@ Archivists are incentivized through fees charged for accessing historical data. 
 ### Equations
 
 The following equation describes the expected minimum fee structure required for archivists:
-
 
 $$
 \mathbb{E}[Payout_{Ar}] = \lambda_{access} \cdot Fee - C_{operation} - C\_{capital}
@@ -125,10 +222,9 @@ Where:
 - $$C_{capital}\$$ = Cost of setting up an archivist
 
 $$(\lambda_{access} \cdot Fee) $$ represents the average earnings from access fees over time.
-$$(C_{operation} + C_{capital}) $$ represents total costs
+$$(C*{operation} + C*{capital}) $$ represents total costs
 
 **Condition for sustainability:**
-
 
 $$
 \mathbb{E}[Payout_{Ar}] > 0
@@ -137,7 +233,6 @@ $$
 ## Combined Incentives
 
 To ensure that running all watcher roles in tandem is economically viable, the combined expected payouts must exceed the combined costs of operating all services together.
-
 
 $$
 \mathbb{E}[Payout_{Total}] = \mathbb{E}[Payout_{Pr}] + \mathbb{E}[Payout_{Fa}] + \mathbb{E}[Payout_{Ca}] + \mathbb{E}[Payout_{Ar}] - C\_{operation} - C\_{capital}
@@ -149,7 +244,6 @@ Where:
 - $$C_{capital}$$ = Cost of capital for the core watcher service
 
 **Condition for overall sustainability:**
-
 
 $$
 \mathbb{E}[Payout_{Total}] > 0
