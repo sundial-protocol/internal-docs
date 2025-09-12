@@ -35,7 +35,7 @@ The limiting factor is the processing capabilities of the node and node operator
 
 ### Current TPS
 
-The Sundial L2 in its current immature state has achieved a TPS of approximately 800 TPS.
+The Sundial L2 in its current immature state has achieved a TPS of approximately 800.
 
 ### Anticipated TPS
 
