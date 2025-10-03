@@ -13,7 +13,8 @@ sequenceDiagram
     participant L2 as Sundial L2
     participant L1 as Cardano L1
 
-    Note over User, L1: Bitcoin to Sundial Bridge Flow
+    Note over User, BridgeOp: Bitcoin L1
+    Note over BridgeOp, L1: Sundial L2
 
     User->>UI: Initiate Bridge Request
     UI->>BridgeService: Select Bridge
@@ -46,7 +47,8 @@ sequenceDiagram
     participant BTCL1 as Bitcoin L1
 
 
-    Note over User, BTCL1: Sundial to Bitcoin Bridge Flow
+    Note over User, BridgeOp: Sundial L2
+    Note over BridgeOp, BTCL1: Bitcoin L1
 
     User->>UI: Initiate Bridge Request
     UI->>BridgeService: Select Bridge
@@ -61,6 +63,52 @@ sequenceDiagram
 
 ```
 
-## Settlement Flow
-TODO
+## Deposit Flow (Cardano to Sundial)
 
+```mermaid
+sequenceDiagram
+    participant User as User on L1
+    participant UI
+    participant L1 as Settlement Queue
+    participant BP as Block Producer
+    participant Facilitator
+    participant L2 as User on L2
+
+    Note over User, Facilitator: Cardano L1
+    Note over BP, L2: Sundial L2
+    User->>UI: Initiate Deposit Request
+    UI->>L1: Create Deposit Tx
+    BP->>L1: Monitor for Deposits
+
+alt Standard
+    BP->>L2: Funds to User
+else Accelerated
+    Facilitator->>L1: Monitor for Deposits
+    Facilitator->>L2: Accelerated Funds
+    BP->>Facilitator: Settle Tx on L2
+end
+```
+
+## Withdrawal Flow (Sundial to Cardano)
+```mermaid
+sequenceDiagram
+    participant L2 as User on L2
+    participant UI
+    participant BP as Block Producer
+    participant Facilitator
+    participant L1 as State Queue
+    participant User as User on L1
+
+    Note over L2, Facilitator: Sundial L2
+    Note over BP, User: Cardano L1
+    L2->>UI: Initiate Withdrawal Request
+    UI->>BP: Create Withdrawal Tx
+    BP->>L1: Tx Inclusion
+alt Standard
+    L1->>User: Funds Available after Challenge Period
+else Accelerated
+    Facilitator->>BP: Monitor for Withdrawals
+    Facilitator->>User: Accelerated Funds
+    L1->>Facilitator: Settle Tx on L1
+end
+```
