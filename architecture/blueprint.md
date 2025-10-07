@@ -1,5 +1,46 @@
 # Component Interactions / Data Flow
 
+This document contains sequence diagrams illustrating the flow of assets and data between the various components of the Sundial architecture. For more detailed information on each component, please refer to the respective architecture documents.
+
+## Integration Points
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as Sundial Web UI
+    participant L1 as Any UTxO L1
+    participant Bridge as Bridging Flow
+    participant L2 as Sundial L2
+    participant Stake as Staking service
+    participant CL1 as Cardano L1
+    participant Yield as Yield Instruments
+    
+    Note over User, Bridge: Any UTxO L1
+    Note over Bridge, Yield: Sundial L2
+
+    User->>UI: Initiate Action
+    UI->>L1: Interact with L1
+    L1->>Bridge: Bridge Assets 
+    Bridge->>L2: Receive Assets
+    L2->>Stake: Stake Assets
+    L2->>CL1: Settlement
+    Stake->>Yield: Invest in Yield Instruments
+    Yield->>Stake: Yield Returns
+    Stake->>L2: Rewards/Returns
+    L2->>User: Finalize Action
+
+    User->>UI: Monitor/Manage
+    UI->>L2: Query State/Balance
+    L2->>User: Provide Updates
+
+    User->>UI: Initiate Withdrawal
+    UI->>L2: Create Withdrawal Tx
+    L2->>Bridge: Prepare for Bridging
+    Bridge->>L1: Release Assets
+    L1->>User: Complete Withdrawal
+
+```
+
 ## Bridge Flow (Bitcoin to Sundial)
 Bridging can look pretty different based on the bridge used. This diagram illustrates the flow for both the Cardinal and Charms bridges.
 
