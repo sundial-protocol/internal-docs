@@ -4,24 +4,25 @@ This document contains sequence diagrams illustrating the flow of assets and dat
 
 ## Integration Points
 
+At a high level, the flow for staking on Sundial using assets from a UTxO L1 is fairly straightforward, with users interacting via a web UI that connects to the L1 and L2 protocols, as well as the bridging and staking services.
+
 ```mermaid
 sequenceDiagram
     participant User
     participant UI as Sundial Web UI
     participant L1 as Any UTxO L1
-    participant Bridge as Bridging Flow
     participant L2 as Sundial L2
     participant Stake as Staking service
     participant CL1 as Cardano L1
     participant Yield as Yield Instruments
-    
-    Note over User, Bridge: Any UTxO L1
-    Note over Bridge, Yield: Sundial L2
+
+    Note over User, L1: Any UTxO L1
+    Note over L1, L2: Bridge / Deposit Flow
+    Note over L2, Yield: Sundial L2
 
     User->>UI: Initiate Action
     UI->>L1: Interact with L1
-    L1->>Bridge: Bridge Assets 
-    Bridge->>L2: Receive Assets
+    L1->>L2: Bridge / Deposit Assets
     L2->>Stake: Stake Assets
     L2->>CL1: Settlement
     Stake->>Yield: Invest in Yield Instruments
@@ -33,15 +34,19 @@ sequenceDiagram
     UI->>L2: Query State/Balance
     L2->>User: Provide Updates
 
-    User->>UI: Initiate Withdrawal
-    UI->>L2: Create Withdrawal Tx
-    L2->>Bridge: Prepare for Bridging
-    Bridge->>L1: Release Assets
-    L1->>User: Complete Withdrawal
+    User->>UI: Initiate Release
+    UI->>L2: Create Release Tx
+    L2->>L1: Release / Withdraw Assets
+    L1->>User: Complete Release
 
 ```
 
-## Bridge Flow (Bitcoin to Sundial)
+The main point of complexity is in the bridging and deposit flows, which can vary significantly based on the bridge used and whether the user is depositing or withdrawing. The following sections provide more detailed diagrams for these flows.
+
+## Bridge Flow
+
+### Bridge Assets (Bitcoin to Sundial)
+
 Bridging can look pretty different based on the bridge used. This diagram illustrates the flow for both the Cardinal and Charms bridges.
 
 ```mermaid
@@ -74,7 +79,8 @@ sequenceDiagram
     L2->>L1: Settle Tx
 ```
 
-## Bridge Flow (Sundial to Bitcoin)
+### Release Assets (Sundial to Bitcoin)
+
 Unlocking for Charms & Cardinal bridges both rely on similar mechanisms involving Mithril threshold signatures.
 
 ```mermaid
@@ -104,7 +110,13 @@ sequenceDiagram
 
 ```
 
-## Deposit Flow (Cardano to Sundial)
+## Deposit Flow
+
+As the settlement layer, Cardano has some advantages for liquidity transfer. Rather than bridging assets, we term these transfers as deposits and withdrawals.
+
+### Deposit Assets (Cardano to Sundial)
+
+Deposits can be accelerated by facilitators who provide liquidity on the L2 in exchange for a fee.
 
 ```mermaid
 sequenceDiagram
@@ -130,7 +142,10 @@ else Accelerated
 end
 ```
 
-## Withdrawal Flow (Sundial to Cardano)
+### Withdraw Assets (Sundial to Cardano)
+
+Likewise withdrawals can be accelerated by facilitators who provide liquidity on the L1 in exchange for a fee.
+
 ```mermaid
 sequenceDiagram
     participant L2 as User on L2
