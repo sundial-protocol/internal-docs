@@ -23,6 +23,8 @@ Provers are responsible for verifying the state of the blockchain and ensuring t
 
 When a block is produced, provers will verify the transactions within that block and ensure they adhere to the protocol's rules. If they detect any issues they can submit a proof to the network and earn the block producer's deposit as a reward.
 
+![Prover Interaction Flow](./prover_flow_diagram.png)
+
 We intend to require a significant deposit as collateral for the block producer role, which means any successful prover will be able to earn a significant reward for their work. However, since this process is deterministic, it's unlikely that this will be a common occurrence.
 
 ### Facilitators (SL5)
