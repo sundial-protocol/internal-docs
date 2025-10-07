@@ -10,10 +10,9 @@ In return, operators are registered and included in the protocol itself, given o
 
 More information on Operator Roles can be found [here](./operators.md).
 
-
 ### Layer Operators (L1-L2)
 
-Layer Operators (or Block Producers) are the foundation of the Sundial protocol. They're responsible for producing blocks on the L2, ensuring that transactions are processed efficiently and accurately. 
+Layer Operators (or Block Producers) are the foundation of the Sundial protocol. They're responsible for producing blocks on the L2, ensuring that transactions are processed efficiently and accurately.
 
 ### Bridge Operators (SL5)
 
@@ -44,6 +43,7 @@ Canaries are a type of watcher that monitor the L2 directly for fraud and other 
 They play a crucial role in maintaining the integrity of the network by providing the first line of defense against fraud and other malicious activities.
 
 ### Archivists (L2)
+
 Archivists are responsible for maintaining the integrity of the data stored in the protocol. They ensure that historical data is accurately recorded and accessible, providing a reliable source of information for users and other services.
 
 ## Liquidity Providers (SL4)
@@ -54,4 +54,8 @@ Liquidity Providers have a passive role in the protocol, adding to the security,
 
 Users take whatever role they wish in the protocol. They are not anticipated to act in any way except in their own self interest, however the existence of users in the protocol is still a key component, providing motion and life to an otherwise predictable machine.
 
-We specify user interfaces [here](../layers/SL7/user-interfaces.md).
+They interact with the protocol through submitting transactions requests or orders, and can choose to use any of the services provided by the protocol.
+
+![User Interaction Flow](./user_flow_diagram.png)
+
+We specify more on user interfaces [here](../layers/SL7/user-interfaces.md).
