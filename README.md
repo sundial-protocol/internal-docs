@@ -17,4 +17,4 @@ These documents are currently split into the following categories:
 
 `/reports/` contains various reports related to the project, including Catalyst reviews and feedback.
 
-Catalyst Reviewers, please see the [Feedback Answers Document](./reports/Catalyst%20Feedback%20Answers.pdf) for our responses to your questions.
+Catalyst Reviewers, please see the [Milestone 3 Hyperlink Guide](./reports/milestone-guides/M3%20Hyperlink%20Guide.pdf) for a handy overview of where to find everything you're looking for.
