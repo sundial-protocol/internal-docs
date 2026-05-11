@@ -13,6 +13,9 @@ The repository uses:
 
 The current seed suite in `demo/midgard-node` runs through `pnpm test`; as the
 suite is split out, those tests should map into the command structure below.
+Legacy tests that still live outside the current `unit/` and `integration/`
+folder split remain intentionally supported through
+`cd demo && npm run test:legacy:all`.
 
 ### Layer Boundaries And Mocking
 
@@ -81,6 +84,7 @@ Aggregates:
 Current demo entrypoints:
 
 - `cd demo/midgard-node && pnpm test`
+- `cd demo && npm run test:legacy:all`
 - `cd demo/midgard-node && pnpm type-check`
 - `cd demo/midgard-node && pnpm build`
 - `cd demo/midgard-node && docker compose run --rm midgard-node-tests`
@@ -141,8 +145,22 @@ Use the narrowest relevant command first:
 Until the split commands exist, use the current demo commands:
 
 - isolated/current suite verification: `cd demo/midgard-node && pnpm test`
+- legacy suite verification: `cd demo && npm run test:legacy:all`
 - containerized database parity:
   `cd demo/midgard-node && docker compose run --rm midgard-node-tests`
+
+## Legacy Tests
+
+Legacy tests are tests that have not yet been moved into the current `unit/` or
+`integration/` folder split. They currently include specs that live directly
+under package `tests/` directories, such as `demo/midgard-node/tests/*.test.ts`
+and `demo/midgard-ts/tests/*.test.ts`.
+
+Do not move, rename, reclassify, or otherwise touch legacy tests during ordinary
+focused changes unless the user explicitly asks for that migration. They remain
+part of supported validation and can be executed with:
+
+- `cd demo && npm run test:legacy:all`
 
 ## Current Seed Suite
 
@@ -231,6 +249,7 @@ Current demo validation commands:
 - `cd demo/midgard-node && pnpm type-check`
 - `cd demo/midgard-node && pnpm build`
 - `cd demo/midgard-node && pnpm test`
+- `cd demo && npm run test:legacy:all`
 - `cd demo/midgard-node && docker compose run --rm midgard-node-tests`
 
 ## Related Docs
