@@ -23,6 +23,8 @@ The objective is to produce repeatable evidence that the Sundial staging and tes
 
 This MTP is structured as a testnet validation plan. It is intended to verify operational behavior, integration behavior, baseline security posture, and controlled-load stability of the Sundial staging and testnet environments.
 
+Detailed scalability and stress testing procedures, target TPS tiers, load-driver requirements, benchmark metrics, stop criteria, and final scalability report templates are defined in the controlled-load addendum: [`scalability-stress-test-report.md`](scalability-stress-test-report.md).
+
 The plan does not attempt to replace production-readiness reviews, formal verification, external audit processes, or mainnet launch assessments. Those activities are separate hardening steps and may be conducted after testnet validation.
 
 The purpose of this document is to establish a controlled, repeatable, and evidence-based approach to validating the Sundial staging environment and Sundial testnet before the environment is used as a foundation for broader production-readiness follow-up. The plan defines what will be tested, how testing will be executed, what evidence will be collected, how defects will be managed, and what criteria will be used to determine completion of the validation cycle.
@@ -168,6 +170,8 @@ This validation does not replace external audit, formal verification, or product
 ### 5.6 Controlled Load Validation
 
 Controlled load validation will assess stability of supported staging and testnet workflows under defined load conditions. The objective is to observe service behavior, response latency, error rate, resource usage, queued processing, worker execution, transaction handling, and block construction behavior while load is applied.
+
+The detailed scalability and stress test approach is maintained as an extension to this MTP in [`scalability-stress-test-report.md`](scalability-stress-test-report.md). That addendum defines the target-driven transaction volumes, load-driver contract, required metrics, acceptance thresholds, reporting templates, and implementation backlog for benchmark-grade evidence collection.
 
 Controlled load testing is not intended to establish final production throughput limits. Results will be used to identify stability issues, operational constraints, and recommended production-readiness follow-up items.
 
@@ -441,6 +445,8 @@ The baseline security validation activity is limited to observable service-level
 
 Controlled load testing will be performed against supported staging and testnet workflows.
 
+Controlled load execution must follow the detailed scalability and stress test plan addendum in [`scalability-stress-test-report.md`](scalability-stress-test-report.md) when the objective is to make scalability, throughput, latency, cost, stability, or before/after optimization claims.
+
 The load test scope includes:
 
 * concurrent API requests
@@ -461,11 +467,11 @@ The load test scope includes:
 
 The objective is to demonstrate environment stability under defined load conditions, not to establish final production throughput limits.
 
-Controlled load testing will use defined request rates, concurrency levels, payload types, duration, and observation points. Load execution will be monitored through logs, metrics, resource usage, response status codes, latency measurements, error rates, worker queues, transaction processing observations, and block construction behavior.
+Controlled load testing will use defined request rates, target TPS tiers, load-driver profiles, payload types, duration, recovery windows, and observation points. Load execution will be monitored through logs, metrics, resource usage, response status codes, latency measurements, error rates, worker queues, transaction processing observations, block construction behavior, and L1 commitment cost evidence where applicable.
 
 Load testing will be executed in a controlled manner to avoid uncontrolled disruption to the validation environment. Test limits will be documented before execution. If unrecoverable service failure occurs, the test will be stopped, evidence will be collected, and a defect will be recorded.
 
-The final load test summary will document test conditions, execution duration, request volumes, observed latency, error rates, resource usage, service stability, worker behavior, and recommended follow-up actions.
+The final load test summary will document test conditions, execution duration, target and achieved transaction rates, request volumes, observed latency, error rates, resource usage, service stability, worker behavior, cost observations where applicable, and recommended follow-up actions. Formal scalability benchmark reports should use the templates and evidence requirements defined in the addendum.
 
 ## 16\. Defect Management
 
@@ -519,7 +525,11 @@ The following deliverables will be produced as part of the validation cycle:
 
 * baseline security validation summary
 
+* approved scalability and stress test plan addendum, where controlled-load scalability claims are in scope
+
 * controlled load test summary
+
+* scalability and stress benchmark report, where executed
 
 * defect register
 
@@ -584,6 +594,8 @@ The validation report will include:
 * baseline security validation summary
 
 * controlled load validation summary
+
+* scalability and stress benchmark summary, where executed under the addendum
 
 * evidence references
 
@@ -819,7 +831,7 @@ Residual risks should be documented using a consistent format:
 
 * Impact
 
-* Current Status
+* Status
 
 * Recommended Follow-Up
 
