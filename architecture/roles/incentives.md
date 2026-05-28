@@ -17,6 +17,7 @@ $$
 $$
 
 Where:
+
 - $$\lambda_{tx}$$ = Expected number of transactions processed
 - $$TxFee$$ = Average gas fee per transaction sent to block
 - $$\tau_{rotation}$$ = Operation window for block production
@@ -24,7 +25,6 @@ Where:
 - $$Collateral_{btc}$$ = Amount of BTC locked to participate
 - $$C_{opportunity}$$ = Opportunity cost of locked collateral
 - $$C_{operation}$$ = Cost of operating a node
-
 
 **Condition for sustainability:**
 

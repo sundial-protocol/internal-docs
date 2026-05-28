@@ -113,7 +113,6 @@ These operators focus narrowly on one function: **attesting to Bitcoin block inc
 #### Bitcoin Node Maintenance
 
 - **Run a full, fully validating Bitcoin node** (e.g., Bitcoin Core), monitoring the blockchain to obtain:
-
   - Block headers (and optionally full block data).
   - Chain height and block canonicality.
   - Transaction inclusion data and Merkle proofs.
@@ -121,12 +120,10 @@ These operators focus narrowly on one function: **attesting to Bitcoin block inc
 #### Oracle Attestation Service
 
 - Extract relevant data:
-
   - **Merkle inclusion proofs** of beaming transactions.
   - **Proof-of-work-based finality**, confirming a block resides on the main chain with sufficient confirmations.
 
 - Optionally, package:
-
   - Block header hashes.
   - Proof-of-work depth (e.g., confirmation count).
   - Merkle proofs for beamed transactions.
@@ -137,7 +134,6 @@ The Charms protocol requires:
 
 - Verification that charmed outputs (beamed) appear in the blockchain’s main branch.
 - Provision of:
-
   - **Merkle proof** for inclusion.
   - **Chain stability proof**, e.g., X blocks of proof-of-work on top of that block.
 
@@ -162,7 +158,6 @@ Operators feed this information to:
 
 - **Bitcoin node** (e.g., Bitcoin Core).
 - Lightweight **oracle service** that:
-
   - Extracts headers, confirmations, Merkle proofs.
   - Packages attestations in client-friendly format.
   - Optionally signs the data for integrity.
@@ -175,7 +170,6 @@ Operators feed this information to:
 
 - **What they don’t do**: They’re not custody agents, not zkVM proof providers, not app contract evaluators.
 - **What they do**:
-
   1. Track the Bitcoin blockchain.
   2. Generate inclusion and PoW-based proofs.
   3. Serve these proofs to Charms’ client ecosphere.

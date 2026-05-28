@@ -9,7 +9,7 @@
 | Version | Date       | Author    | Description                              |
 | :------ | :--------- | :-------- | :--------------------------------------- |
 | 1.0     | 2026-04-01 | Vic Genin | Initial scalability and stress test plan |
-|         |            |           |                                          |
+| 2.0     | 2026-05-28 | Vic Genin | Testnet/mainnet tier split               |
 
 # Scalability and Stress Test Plan for Sundial Testnet
 
@@ -131,9 +131,10 @@ and evidence requirements in this plan.
 The target basis comes from:
 
 - `internal-docs/architecture/scaling.md`, which states an initial Sundial L2
-  target of approximately `800 TPS` and estimates a practical TPS of
-  approximately `24,985 TPS` under the stated transaction processing and
-  hashing assumptions;
+  testnet target of approximately `800 TPS`, a testnet industrial target of
+  `1,000 TPS`, a mainnet baseline of `2,000 TPS` comparable to established
+  payment network benchmarks, and a practical mainnet estimate of `5,000 TPS`
+  on commodity general-purpose infrastructure;
 
 - `internal-docs/reports/M2.1-Technical-Requirements.md`, which identifies
   optimized transaction processing for institutional volumes, advanced mempool
@@ -147,13 +148,16 @@ The target basis comes from:
 
 ### 5.1 Target Classes
 
-| Target Class              | Purpose                                                                                                                                     | Target Signal                                                                                     |
-| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------ |
-| Initial TPS target        | Demonstrate and document the initial L2 throughput target.                                                                                  | Sustained `800 TPS` with stable service behavior.                                                 |
-| Institutional load target | Demonstrate controlled growth beyond the initial TPS target and validate mempool, queue, commitment, and resource behavior at higher rates. | Sustained `1,000-10,000 TPS` test windows.                                                        |
-| Practical estimate target | Validate the architecture's estimated practical TPS under controlled conditions or document the bottlenecks preventing it.                  | Sustained `~24,985 TPS` target window or bottleneck evidence.                                     |
-| Latency target            | Confirm that durably accepted mempool transactions are included in committed blocks inside the architecture's stated latency envelope.      | p95 mempool-accepted-to-committed inclusion latency `<= 20s`, where instrumentation supports measurement. |
-| Cost target               | Confirm that L1 commitment cost remains stable or improves per committed L2 transaction as block volume increases.                          | L1 fee per committed L2 transaction remains stable or decreases under larger block volumes.       |
+The test plan covers both testnet validation targets and mainnet performance targets. Testnet tiers establish confidence in the architecture under controlled conditions. Mainnet tiers demonstrate the throughput levels required for production deployment.
+
+| Target Class              | Environment | Purpose                                                                                                                                | Target Signal                                                                                             |
+| :------------------------ | :---------- | :------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| Testnet sustained target  | Testnet     | Demonstrate and document the initial L2 testnet throughput target.                                                                     | Sustained `800 TPS` with stable service behavior.                                                         |
+| Testnet industrial target | Testnet     | Prove stable operation above the testnet baseline and validate mempool, queue, commitment, and resource behavior.                      | Sustained `1,000 TPS` test window.                                                                        |
+| Mainnet baseline target   | Mainnet     | Validate throughput comparable to established payment network benchmarks.                                                              | Sustained `2,000 TPS` with stable service behavior.                                                       |
+| Practical mainnet target  | Mainnet     | Validate the architecture's practical mainnet TPS estimate under controlled conditions or document the bottlenecks preventing it.      | Sustained `5,000 TPS` target window or bottleneck evidence.                                               |
+| Latency target            | Both        | Confirm that durably accepted mempool transactions are included in committed blocks inside the architecture's stated latency envelope. | p95 mempool-accepted-to-committed inclusion latency `<= 20s`, where instrumentation supports measurement. |
+| Cost target               | Both        | Confirm that L1 commitment cost remains stable or improves per committed L2 transaction as block volume increases.                     | L1 fee per committed L2 transaction remains stable or decreases under larger block volumes.               |
 
 ### 5.2 Load Driver Contract
 
@@ -234,27 +238,28 @@ The Grafana dashboard is defined in `l2/midgard-node/grafana/dashboard.json`.
 
 ### 6.1 Primary Scalability Metrics
 
-| Area                      | Metric or Query                                                  | Meaning                                                                 | Success Signal                                                   |
-| :------------------------ | :--------------------------------------------------------------- | :---------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| Enqueued submissions      | `tx_submissions_enqueued_total`                                  | Count of valid L2 submissions accepted by `POST /submit` into tx queue. | Increases in line with generated load.                           |
-| Enqueue rate              | `rate(tx_submissions_enqueued_total[$__rate_interval])`          | Enqueued submissions per second.                                         | Sustains target rate during test window.                         |
-| Durable mempool accepted  | `tx_submissions_mempool_accepted_total`                          | Count of submitted txs durably written to `MempoolDB`.                  | Tracks enqueued volume with bounded processing lag.              |
-| Durable acceptance rate   | `rate(tx_submissions_mempool_accepted_total[$__rate_interval])`  | Durably accepted submissions per second.                                 | Sustains target rate and tracks enqueue rate within tolerance.   |
-| Rejected submissions      | `tx_submissions_rejected_total`                         | Malformed or non-hex CBOR rejected at the HTTP boundary.  | Remains `0` for valid generated load.                     |
-| In-memory backlog         | `tx_queue_size`                                         | Queue size before tx processing.                          | Does not grow without recovery.                           |
-| Mempool depth             | `mempool_tx_count`                                      | Transactions held in `MempoolDB`.                         | Rises under load and drains through commitments.          |
-| Committed tx volume       | `commit_block_tx_count_total`                           | Transactions included in committed blocks.                | Catches up to durable accepted volume after processing lag.      |
-| Commit drain rate         | `rate(commit_block_tx_count_total[$__rate_interval])`   | Committed transactions per second.                        | Meets or approaches durable acceptance rate over sustained windows. |
-| Committed blocks          | `commit_block_count_total`                              | Number of committed Midgard blocks.                       | Continues increasing under load.                          |
-| Block commit rate         | `rate(commit_block_count_total[$__rate_interval])`      | Committed blocks per second.                              | Stable and non-zero during active commitment windows.     |
-| Transactions per block    | `commit_block_txs_per_block`                            | Tx count in the most recently committed block.            | Stable within expected block sizing behavior.             |
-| Block commitment duration | `commit_block_duration_seconds`                         | Latest block commitment worker duration.                  | Does not trend upward beyond benchmark threshold.         |
-| Block event size          | `commit_block_events_size_bytes`                        | Total event byte size in the latest block.                | Tracks payload size without failure.                      |
-| Block commitment failures | `commit_block_commitment_failures_total`                | Worker failures, timeouts, SDK/CML errors.                | Remains `0`.                                              |
-| Merged blocks             | `merge_block_count_total`                               | Blocks merged into confirmed state.                       | Continues increasing when merge conditions are met.       |
-| Merge failures            | `merge_block_failures_total`                            | Merge transaction failures.                               | Remains `0`.                                              |
+| Area                      | Metric or Query                                                 | Meaning                                                                 | Success Signal                                                      |
+| :------------------------ | :-------------------------------------------------------------- | :---------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| Enqueued submissions      | `tx_submissions_enqueued_total`                                 | Count of valid L2 submissions accepted by `POST /submit` into tx queue. | Increases in line with generated load.                              |
+| Enqueue rate              | `rate(tx_submissions_enqueued_total[$__rate_interval])`         | Enqueued submissions per second.                                        | Sustains target rate during test window.                            |
+| Durable mempool accepted  | `tx_submissions_mempool_accepted_total`                         | Count of submitted txs durably written to `MempoolDB`.                  | Tracks enqueued volume with bounded processing lag.                 |
+| Durable acceptance rate   | `rate(tx_submissions_mempool_accepted_total[$__rate_interval])` | Durably accepted submissions per second.                                | Sustains target rate and tracks enqueue rate within tolerance.      |
+| Rejected submissions      | `tx_submissions_rejected_total`                                 | Malformed or non-hex CBOR rejected at the HTTP boundary.                | Remains `0` for valid generated load.                               |
+| In-memory backlog         | `tx_queue_size`                                                 | Queue size before tx processing.                                        | Does not grow without recovery.                                     |
+| Mempool depth             | `mempool_tx_count`                                              | Transactions held in `MempoolDB`.                                       | Rises under load and drains through commitments.                    |
+| Committed tx volume       | `commit_block_tx_count_total`                                   | Transactions included in committed blocks.                              | Catches up to durable accepted volume after processing lag.         |
+| Commit drain rate         | `rate(commit_block_tx_count_total[$__rate_interval])`           | Committed transactions per second.                                      | Meets or approaches durable acceptance rate over sustained windows. |
+| Committed blocks          | `commit_block_count_total`                                      | Number of committed Midgard blocks.                                     | Continues increasing under load.                                    |
+| Block commit rate         | `rate(commit_block_count_total[$__rate_interval])`              | Committed blocks per second.                                            | Stable and non-zero during active commitment windows.               |
+| Transactions per block    | `commit_block_txs_per_block`                                    | Tx count in the most recently committed block.                          | Stable within expected block sizing behavior.                       |
+| Block commitment duration | `commit_block_duration_seconds`                                 | Latest block commitment worker duration.                                | Does not trend upward beyond benchmark threshold.                   |
+| Block event size          | `commit_block_events_size_bytes`                                | Total event byte size in the latest block.                              | Tracks payload size without failure.                                |
+| Block commitment failures | `commit_block_commitment_failures_total`                        | Worker failures, timeouts, SDK/CML errors.                              | Remains `0`.                                                        |
+| Merged blocks             | `merge_block_count_total`                                       | Blocks merged into confirmed state.                                     | Continues increasing when merge conditions are met.                 |
+| Merge failures            | `merge_block_failures_total`                                    | Merge transaction failures.                                             | Remains `0`.                                                        |
 
 Deprecated alias note:
+
 - `tx_submissions_accepted_total` is deprecated and must not be used for new
   benchmark analysis or report generation. Use
   `tx_submissions_enqueued_total` and
@@ -278,14 +283,14 @@ Deprecated alias note:
 Latency and cost evidence must be captured from both load-driver artifacts and
 node-side telemetry. The formal benchmark evidence set must include:
 
-| Evidence                      | Source                                                                                         | Reporting Use                                   |
-| :---------------------------- | :--------------------------------------------------------------------------------------------- | :---------------------------------------------- |
-| Submission duration           | Load-driver JSONL request timings or interim manager batch log output                          | Client-side submit latency and pacing evidence. |
-| Durable-accepted-to-committed lag | Difference between `tx_submissions_mempool_accepted_total` and `commit_block_tx_count_total` over time | Backlog and eventual processing latency proxy. |
-| Queue and mempool drain time  | Time for `tx_queue_size` and `mempool_tx_count` to return to baseline after load stops         | Recovery latency.                               |
-| Block commitment duration     | `commit_block_duration_seconds`                                                                | Node-side commitment latency proxy.             |
-| L1 commitment fees            | Commitment transaction evidence from L1 provider or tx logs                                    | Cost metric for block commitment path.          |
-| L2 generated transaction fees | Transaction corpus metadata and Lucid protocol params                                          | Report separately from L1 commitment fees.      |
+| Evidence                          | Source                                                                                                 | Reporting Use                                   |
+| :-------------------------------- | :----------------------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| Submission duration               | Load-driver JSONL request timings or interim manager batch log output                                  | Client-side submit latency and pacing evidence. |
+| Durable-accepted-to-committed lag | Difference between `tx_submissions_mempool_accepted_total` and `commit_block_tx_count_total` over time | Backlog and eventual processing latency proxy.  |
+| Queue and mempool drain time      | Time for `tx_queue_size` and `mempool_tx_count` to return to baseline after load stops                 | Recovery latency.                               |
+| Block commitment duration         | `commit_block_duration_seconds`                                                                        | Node-side commitment latency proxy.             |
+| L1 commitment fees                | Commitment transaction evidence from L1 provider or tx logs                                            | Cost metric for block commitment path.          |
+| L2 generated transaction fees     | Transaction corpus metadata and Lucid protocol params                                                  | Report separately from L1 commitment fees.      |
 
 Additional observability requirements:
 
@@ -302,23 +307,25 @@ Additional observability requirements:
 Formal benchmark thresholds must be approved before execution. The following
 thresholds are recommended for testnet scalability reporting.
 
-| Category                  | Target                                                                                                              |
-| :------------------------ | :------------------------------------------------------------------------------------------------------------------ |
-| Availability              | Node API remains available during the test and recovery windows.                                                    |
-| Scrape health             | `up{job="midgard_nodes"}` remains `1`.                                                                              |
-| Submission rejection rate | `tx_submissions_rejected_total` remains `0` for valid generated load.                                               |
-| Commitment failures       | `commit_block_commitment_failures_total` remains `0`.                                                               |
-| Merge failures            | `merge_block_failures_total` remains `0`.                                                                           |
-| Queue recovery            | `tx_queue_size` returns to baseline within 10 minutes after load stops.                                             |
-| Mempool recovery          | `mempool_tx_count` returns to pre-test baseline or documented expected residual within 30 minutes after load stops. |
-| Commitment progress       | `commit_block_count_total` continues increasing during sustained load windows.                                      |
-| Initial TPS target        | `800 TPS` sustained tier passes before higher institutional targets are claimed.                                    |
-| Practical estimate target | `24,985 TPS` tier either passes or produces clear bottleneck evidence with remediation owners.                      |
+| Category                  | Target                                                                                                                      |
+| :------------------------ | :-------------------------------------------------------------------------------------------------------------------------- |
+| Availability              | Node API remains available during the test and recovery windows.                                                            |
+| Scrape health             | `up{job="midgard_nodes"}` remains `1`.                                                                                      |
+| Submission rejection rate | `tx_submissions_rejected_total` remains `0` for valid generated load.                                                       |
+| Commitment failures       | `commit_block_commitment_failures_total` remains `0`.                                                                       |
+| Merge failures            | `merge_block_failures_total` remains `0`.                                                                                   |
+| Queue recovery            | `tx_queue_size` returns to baseline within 10 minutes after load stops.                                                     |
+| Mempool recovery          | `mempool_tx_count` returns to pre-test baseline or documented expected residual within 30 minutes after load stops.         |
+| Commitment progress       | `commit_block_count_total` continues increasing during sustained load windows.                                              |
+| Testnet sustained target  | `800 TPS` sustained tier passes before higher targets are claimed.                                                          |
+| Testnet industrial target | `1,000 TPS` sustained tier passes.                                                                                          |
+| Mainnet baseline target   | `2,000 TPS` sustained tier passes before practical mainnet claims are made.                                                 |
+| Practical mainnet target  | `5,000 TPS` tier either passes or produces clear bottleneck evidence with remediation owners.                               |
 | Inclusion latency         | p95 mempool-accepted-to-committed latency is `<= 20s` where instrumentation supports per-transaction or cohort measurement. |
-| Throughput stability      | Durable accepted tx/s and committed tx/s do not degrade by more than 20% across the steady-state window after warm-up. |
-| Cost stability            | L1 commitment fee per committed L2 transaction remains stable or improves as block volume increases.                |
-| Resource stability        | CPU and memory remain below environment-specific saturation limits and do not show unbounded growth.                |
-| Service recovery          | No manual restart is required after the test unless the test is explicitly a destructive saturation run.            |
+| Throughput stability      | Durable accepted tx/s and committed tx/s do not degrade by more than 20% across the steady-state window after warm-up.      |
+| Cost stability            | L1 commitment fee per committed L2 transaction remains stable or improves as block volume increases.                        |
+| Resource stability        | CPU and memory remain below environment-specific saturation limits and do not show unbounded growth.                        |
+| Service recovery          | No manual restart is required after the test unless the test is explicitly a destructive saturation run.                    |
 
 The following classification should be used:
 
@@ -341,17 +348,20 @@ optimization if side-by-side comparisons are required.
 
 ### 8.1 Formal Benchmark Tiers
 
-| Tier                      | Purpose                                                                 | Transaction Profile          | Target Rate                     | Duration | Approximate Tx Volume |
-| :------------------------ | :---------------------------------------------------------------------- | :--------------------------- | :------------------------------ | :------- | :-------------------- |
-| Instrumentation warm-up   | Confirm environment, harness, dashboards, logs, and reports.            | one-to-one                   | `100 TPS`                       | 10 min   | 60,000 tx             |
-| Initial TPS validation    | Demonstrate the architecture document's initial L2 throughput target.   | one-to-one and mixed         | `800 TPS`                       | 30 min   | 1,440,000 tx          |
-| Institutional baseline    | Prove stable operation above the initial TPS target.                    | one-to-one and mixed         | `1,000 TPS`                     | 30 min   | 1,800,000 tx          |
-| Institutional load        | Exercise high-volume mempool, queue, commitment, and resource behavior. | one-to-one and mixed         | `5,000 TPS`                     | 30 min   | 9,000,000 tx          |
-| Institutional stress      | Identify bottlenecks before the practical estimate target.              | one-to-one and mixed         | `10,000 TPS`                    | 30 min   | 18,000,000 tx         |
-| Practical estimate target | Validate or falsify the architecture's estimated practical TPS.         | one-to-one first, then mixed | `24,985 TPS`                    | 20 min   | 29,982,000 tx         |
-| Peak spike                | Simulate short peak-demand bursts above the sustained target.           | one-to-one and mixed         | `2x last passed sustained tier` | 5 min    | depends on tier       |
+| Tier                     | Environment | Purpose                                                                                                                 | Transaction Profile          | Target Rate                     | Duration | Approximate Tx Volume |
+| :----------------------- | :---------- | :---------------------------------------------------------------------------------------------------------------------- | :--------------------------- | :------------------------------ | :------- | :-------------------- |
+| Instrumentation warm-up  | Both        | Confirm environment, harness, dashboards, logs, and reports.                                                            | one-to-one                   | `100 TPS`                       | 10 min   | 60,000 tx             |
+| Testnet TPS validation   | Testnet     | Demonstrate the initial L2 testnet throughput target.                                                                   | one-to-one                   | `800 TPS`                       | 30 min   | 1,440,000 tx          |
+| Testnet industrial       | Testnet     | Prove stable operation above the testnet baseline.                                                                      | one-to-one                   | `1,000 TPS`                     | 30 min   | 1,800,000 tx          |
+| Mainnet baseline         | Mainnet     | Validate throughput comparable to established payment network benchmarks (approximately Visa average sustained volume). | one-to-one and mixed         | `2,000 TPS`                     | 30 min   | 3,600,000 tx          |
+| Practical mainnet target | Mainnet     | Validate or falsify the architecture's practical mainnet TPS estimate.                                                  | one-to-one first, then mixed | `5,000 TPS`                     | 30 min   | 9,000,000 tx          |
+| Peak spike               | Mainnet     | Simulate short peak-demand bursts above the sustained target.                                                           | one-to-one and mixed         | `2x last passed sustained tier` | 5 min    | depends on tier       |
 
 ### 8.2 Mixed Payload Tiers
+
+Mixed payload runs apply to mainnet tiers only (mainnet baseline and practical
+mainnet target). Testnet tiers use one-to-one transactions throughout to keep
+the testnet validation surface minimal and results straightforward to interpret.
 
 Mixed payload runs should be used after one-to-one runs pass at the same target
 rate. Mixed mode is intended to represent more realistic transaction shape
@@ -389,8 +399,11 @@ The recommended ramp is:
 
 3. Continue increasing by 25% while stability and recovery criteria pass.
 
-4. When the run reaches or exceeds `24,985 TPS`, keep increasing only if a
-   higher exploratory ceiling is explicitly requested.
+4. When the run reaches or exceeds `5,000 TPS`, keep increasing only if a
+   higher exploratory ceiling is explicitly requested. Reaching throughput in
+   the 20,000+ TPS range requires L1 protocol enhancements such as data
+   availability improvements and state-channel scaling mechanisms
+   (for example, Hydrozoa/Gummiworm-style L1 settlement channeling).
 
 5. Record the first bottleneck and classify whether it is load-driver-side,
    node-side, database-side, L1-provider-side, or infrastructure-side.
@@ -466,13 +479,13 @@ documenting how throughput changes as operator resources improve.
 
 The baseline local hardware profile captured for this plan is:
 
-| Resource     | Baseline Profile                                                                                                         |
-| :----------- | :----------------------------------------------------------------------------------------------------------------------- |
-| CPU          | Mainstream desktop-class CPU, Intel 8th+ generation or comparable, 6+ physical cores                |
-| Architecture | x86_64                                                                                                                   |
-| Memory       | 32 GB RAM                                                                                                  |
-| OS           | Ubuntu 24.04 class Linux host                                                                                            |
-| Storage      | 500 GB SSD-backed storage class |
+| Resource     | Baseline Profile                                                                     |
+| :----------- | :----------------------------------------------------------------------------------- |
+| CPU          | Mainstream desktop-class CPU, Intel 8th+ generation or comparable, 6+ physical cores |
+| Architecture | x86_64                                                                               |
+| Memory       | 32 GB RAM                                                                            |
+| OS           | Ubuntu 24.04 class Linux host                                                        |
+| Storage      | 500 GB SSD-backed storage class                                                      |
 
 Comparable cloud shapes for baseline and repeatable testnet benchmarking should
 use general-purpose instances in the same approximate class, with SSD-backed
@@ -593,71 +606,71 @@ Each scalability test run should follow this sequence:
 
 Each run must be summarized using the following format.
 
-| Field                              | Value |
-| :--------------------------------- | :---- |
-| Run ID                             |       |
-| Date and time                      |       |
-| Environment                        |       |
-| Git commit                         |       |
-| Node image or package version      |       |
-| Harness command or config          |       |
-| Target class                       |       |
-| Transaction mode                   |       |
-| Load profile                       |       |
-| Intended duration                  |       |
-| Actual duration                    |       |
-| Target tx/s                        |       |
-| Attempted tx count                 |       |
-| Load-driver submitted tx count     |       |
-| Load-driver failed tx count        |       |
-| Prometheus enqueued tx count delta |       |
+| Field                                      | Value |
+| :----------------------------------------- | :---- |
+| Run ID                                     |       |
+| Date and time                              |       |
+| Environment                                |       |
+| Git commit                                 |       |
+| Node image or package version              |       |
+| Harness command or config                  |       |
+| Target class                               |       |
+| Transaction mode                           |       |
+| Load profile                               |       |
+| Intended duration                          |       |
+| Actual duration                            |       |
+| Target tx/s                                |       |
+| Attempted tx count                         |       |
+| Load-driver submitted tx count             |       |
+| Load-driver failed tx count                |       |
+| Prometheus enqueued tx count delta         |       |
 | Prometheus durable accepted tx count delta |       |
-| Prometheus rejected tx count delta |       |
-| Committed tx count delta           |       |
-| Committed block count delta        |       |
-| Merged block count delta           |       |
+| Prometheus rejected tx count delta         |       |
+| Committed tx count delta                   |       |
+| Committed block count delta                |       |
+| Merged block count delta                   |       |
 | p95 mempool-accepted-to-committed latency  |       |
-| L1 fee per committed L2 tx         |       |
-| Peak tx queue size                 |       |
-| Peak mempool tx count              |       |
-| Peak block commitment duration     |       |
-| Peak CPU usage                     |       |
-| Peak memory usage                  |       |
-| Commitment failure delta           |       |
-| Merge failure delta                |       |
-| Recovery time                      |       |
-| Result                             |       |
-| Evidence references                |       |
+| L1 fee per committed L2 tx                 |       |
+| Peak tx queue size                         |       |
+| Peak mempool tx count                      |       |
+| Peak block commitment duration             |       |
+| Peak CPU usage                             |       |
+| Peak memory usage                          |       |
+| Commitment failure delta                   |       |
+| Merge failure delta                        |       |
+| Recovery time                              |       |
+| Result                                     |       |
+| Evidence references                        |       |
 
 ## 13. Before and After Optimization Comparison
 
 Side-by-side comparisons must use identical load profiles, environment class,
 duration, and transaction mode.
 
-| Metric                             | Before Optimization | After Optimization | Change | Notes |
-| :--------------------------------- | :------------------ | :----------------- | :----- | :---- |
-| Enqueued tx/s p50 window average   |                     |                    |        |       |
-| Enqueued tx/s p95 window average   |                     |                    |        |       |
-| Durable accepted tx/s p50 window average |               |                    |        |       |
-| Durable accepted tx/s p95 window average |               |                    |        |       |
-| Committed tx/s p50 window average  |                     |                    |        |       |
-| Committed tx/s p95 window average  |                     |                    |        |       |
-| Total enqueued tx                  |                     |                    |        |       |
-| Total durable accepted tx          |                     |                    |        |       |
-| Total committed tx                 |                     |                    |        |       |
-| Rejected tx                        |                     |                    |        |       |
-| Peak queue size                    |                     |                    |        |       |
-| Peak mempool size                  |                     |                    |        |       |
-| Queue recovery time                |                     |                    |        |       |
-| Mempool recovery time              |                     |                    |        |       |
-| Peak commitment duration           |                     |                    |        |       |
-| Average commitment duration        |                     |                    |        |       |
-| Commitment failures                |                     |                    |        |       |
-| Merge failures                     |                     |                    |        |       |
-| Peak CPU usage                     |                     |                    |        |       |
-| Peak memory usage                  |                     |                    |        |       |
-| L1 commitment fee total            |                     |                    |        |       |
-| L1 commitment fee per committed tx |                     |                    |        |       |
+| Metric                                   | Before Optimization | After Optimization | Change | Notes |
+| :--------------------------------------- | :------------------ | :----------------- | :----- | :---- |
+| Enqueued tx/s p50 window average         |                     |                    |        |       |
+| Enqueued tx/s p95 window average         |                     |                    |        |       |
+| Durable accepted tx/s p50 window average |                     |                    |        |       |
+| Durable accepted tx/s p95 window average |                     |                    |        |       |
+| Committed tx/s p50 window average        |                     |                    |        |       |
+| Committed tx/s p95 window average        |                     |                    |        |       |
+| Total enqueued tx                        |                     |                    |        |       |
+| Total durable accepted tx                |                     |                    |        |       |
+| Total committed tx                       |                     |                    |        |       |
+| Rejected tx                              |                     |                    |        |       |
+| Peak queue size                          |                     |                    |        |       |
+| Peak mempool size                        |                     |                    |        |       |
+| Queue recovery time                      |                     |                    |        |       |
+| Mempool recovery time                    |                     |                    |        |       |
+| Peak commitment duration                 |                     |                    |        |       |
+| Average commitment duration              |                     |                    |        |       |
+| Commitment failures                      |                     |                    |        |       |
+| Merge failures                           |                     |                    |        |       |
+| Peak CPU usage                           |                     |                    |        |       |
+| Peak memory usage                        |                     |                    |        |       |
+| L1 commitment fee total                  |                     |                    |        |       |
+| L1 commitment fee per committed tx       |                     |                    |        |       |
 
 Optimization comparisons must include notes describing what changed between
 runs. Examples include node code changes, database changes, worker tuning,
@@ -804,9 +817,9 @@ Each defect should include:
 
 Scalability testing is complete when:
 
-- warm-up, initial TPS validation, institutional baseline, institutional load,
-  institutional stress, practical estimate target, and at least one mixed
-  payload run have been executed or explicitly marked blocked;
+- warm-up, testnet TPS validation, testnet industrial, mainnet baseline,
+  practical mainnet target, and at least one mixed payload run have been
+  executed or explicitly marked blocked;
 
 - required metrics were captured for every completed run;
 
@@ -819,11 +832,11 @@ Scalability testing is complete when:
 
 - before/after comparisons were completed where optimization claims are made;
 
-- `800 TPS` reproduction was completed before stronger scalability claims are
-  made;
+- `800 TPS` testnet sustained tier was completed before stronger scalability
+  claims are made;
 
-- the `24,985 TPS` practical estimate target was either passed or converted
-  into a documented bottleneck/remediation report;
+- the `5,000 TPS` practical mainnet target either passed or was converted into
+  a documented bottleneck/remediation report;
 
 - dashboards or exported graphs are available for review;
 
@@ -839,18 +852,18 @@ The final conclusion must distinguish between:
 
 ## 18. Traceability Matrix
 
-| Requirement                                | Validation Method                                  | Primary Evidence                                                    |
-| :----------------------------------------- | :------------------------------------------------- | :------------------------------------------------------------------ |
-| Load testing under high transaction volume | One-to-one and mixed benchmark tiers               | Harness artifacts, `tx_submissions_enqueued_total`, `tx_submissions_mempool_accepted_total`, Grafana exports |
-| Peak demand simulation                     | Peak spike and saturation discovery                | Enqueued tx/s, durable accepted tx/s, queue size, mempool count, resource metrics            |
-| Stability under stress                     | Recovery windows and failure metrics               | Failure counters, API availability, scrape health, logs             |
-| Transaction speed stability                | Durable accepted tx/s, committed tx/s, commitment duration | Prometheus rates and `commit_block_duration_seconds`          |
-| Cost stability                             | L1 commitment fee evidence and committed tx count  | L1 tx records, fee-per-committed-tx calculation                     |
-| Initial TPS validation                     | Initial TPS validation tier                        | Sustained `800 TPS` run evidence                                    |
-| Practical TPS estimate                     | Practical estimate target tier                     | Sustained `24,985 TPS` run or bottleneck report                     |
-| Benchmark reports                          | Run template and comparison table                  | Completed report tables and evidence references                     |
-| Before/after comparison                    | Repeat same load profile on two builds             | Side-by-side metric table                                           |
-| Community dashboard                        | Grafana dashboard or exported graphs               | Public-safe dashboard panels                                        |
+| Requirement                                | Validation Method                                          | Primary Evidence                                                                                             |
+| :----------------------------------------- | :--------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------- |
+| Load testing under high transaction volume | One-to-one and mixed benchmark tiers                       | Harness artifacts, `tx_submissions_enqueued_total`, `tx_submissions_mempool_accepted_total`, Grafana exports |
+| Peak demand simulation                     | Peak spike and saturation discovery                        | Enqueued tx/s, durable accepted tx/s, queue size, mempool count, resource metrics                            |
+| Stability under stress                     | Recovery windows and failure metrics                       | Failure counters, API availability, scrape health, logs                                                      |
+| Transaction speed stability                | Durable accepted tx/s, committed tx/s, commitment duration | Prometheus rates and `commit_block_duration_seconds`                                                         |
+| Cost stability                             | L1 commitment fee evidence and committed tx count          | L1 tx records, fee-per-committed-tx calculation                                                              |
+| Testnet TPS validation                     | Testnet TPS validation tier                                | Sustained `800 TPS` run evidence                                                                             |
+| Practical mainnet TPS estimate             | Practical mainnet target tier                              | Sustained `5,000 TPS` run or bottleneck report                                                               |
+| Benchmark reports                          | Run template and comparison table                          | Completed report tables and evidence references                                                              |
+| Before/after comparison                    | Repeat same load profile on two builds                     | Side-by-side metric table                                                                                    |
+| Community dashboard                        | Grafana dashboard or exported graphs                       | Public-safe dashboard panels                                                                                 |
 
 ## 19. Final Report Conclusion Format
 
@@ -886,20 +899,20 @@ The formal scalability harness and selected load driver must provide the
 following capabilities before reports are treated as industry-standard benchmark
 evidence.
 
-| Capability               | Required Behavior                                                                                                       | Owner                        |
-| :----------------------- | :---------------------------------------------------------------------------------------------------------------------- | :--------------------------- |
-| Fixed run profiles       | Run by target TPS, duration, transaction count, warm-up, cool-down, spike, and ramp configuration.                      | Harness or manager extension |
-| Structured artifacts     | Emit per-request JSONL plus summary JSON and CSV for every run.                                                         | Harness or manager extension |
-| Accurate accounting      | Count attempted, generated, submitted, enqueued, durably accepted, rejected, timed out, retried, and unavailable transactions separately. | Manager extension |
-| Latency statistics       | Compute p50, p90, p95, p99, max, and time-windowed latency summaries.                                                   | Harness                      |
-| Retry semantics          | Implement and report bounded retry behavior without hiding final failure outcomes.                                      | Manager extension            |
-| Availability probing     | Support startup-only, periodic, per-request, and disabled availability checks.                                          | Manager extension            |
-| Deterministic generation | Record random seeds and support replayable transaction corpora.                                                         | Manager extension            |
-| Multi-worker execution   | Coordinate multiple processes or hosts when target TPS exceeds one host's capacity.                                     | Harness                      |
-| Prometheus collection    | Query Prometheus for node and infrastructure metrics across exact run windows.                                          | Harness                      |
-| Grafana evidence         | Export dashboard snapshots or panel images for report attachments.                                                      | Harness                      |
-| Cost collection          | Pull L1 commitment fee data and calculate fee per committed L2 transaction.                                             | Harness                      |
-| Report rendering         | Produce markdown, HTML, or PDF reports from run artifacts and metric queries.                                           | Harness                      |
+| Capability               | Required Behavior                                                                                                                         | Owner                        |
+| :----------------------- | :---------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- |
+| Fixed run profiles       | Run by target TPS, duration, transaction count, warm-up, cool-down, spike, and ramp configuration.                                        | Harness or manager extension |
+| Structured artifacts     | Emit per-request JSONL plus summary JSON and CSV for every run.                                                                           | Harness or manager extension |
+| Accurate accounting      | Count attempted, generated, submitted, enqueued, durably accepted, rejected, timed out, retried, and unavailable transactions separately. | Manager extension            |
+| Latency statistics       | Compute p50, p90, p95, p99, max, and time-windowed latency summaries.                                                                     | Harness                      |
+| Retry semantics          | Implement and report bounded retry behavior without hiding final failure outcomes.                                                        | Manager extension            |
+| Availability probing     | Support startup-only, periodic, per-request, and disabled availability checks.                                                            | Manager extension            |
+| Deterministic generation | Record random seeds and support replayable transaction corpora.                                                                           | Manager extension            |
+| Multi-worker execution   | Coordinate multiple processes or hosts when target TPS exceeds one host's capacity.                                                       | Harness                      |
+| Prometheus collection    | Query Prometheus for node and infrastructure metrics across exact run windows.                                                            | Harness                      |
+| Grafana evidence         | Export dashboard snapshots or panel images for report attachments.                                                                        | Harness                      |
+| Cost collection          | Pull L1 commitment fee data and calculate fee per committed L2 transaction.                                                               | Harness                      |
+| Report rendering         | Produce markdown, HTML, or PDF reports from run artifacts and metric queries.                                                             | Harness                      |
 
 The implementation sequence should be:
 
