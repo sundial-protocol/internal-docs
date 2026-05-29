@@ -129,15 +129,35 @@ The Kupmios variables are still read by config and should be present in `.env`.
 
 ## PostgreSQL
 
-The node connects through `@effect/sql-pg` with:
+The node connects through `@effect/sql-pg` with two separate pools that share
+the same PostgreSQL credentials:
 
-- host: `POSTGRES_HOST`
-- username: `POSTGRES_USER`
-- password: `POSTGRES_PASSWORD`
-- database: `POSTGRES_DB`
-- `maxConnections=20`
-- `idleTimeout=5 minutes`
-- `connectTimeout=2 seconds`
+- RPC pool:
+  - host: `POSTGRES_HOST`
+  - username: `POSTGRES_USER`
+  - password: `POSTGRES_PASSWORD`
+  - database: `POSTGRES_DB`
+  - `maxConnections=20`
+  - `idleTimeout=5 minutes`
+  - `connectTimeout=2 seconds`
+- Sequencer pool:
+  - host: `POSTGRES_HOST`
+  - username: `POSTGRES_USER`
+  - password: `POSTGRES_PASSWORD`
+  - database: `POSTGRES_DB`
+  - `maxConnections=5`
+  - `idleTimeout=5 minutes`
+  - `connectTimeout=2 seconds`
+
+Pool sizing rationale:
+
+- The RPC pool is reserved for HTTP query traffic (`/txs`, `/utxos`, `/tx`,
+  `/block`, health/readiness, and other read handlers).
+- The sequencer pool is reserved for liveness-critical paths: block commitment,
+  block submission, merge, and L1 user-event sync (including the commitment
+  worker bootstrap reads).
+- This prevents read-heavy RPC bursts from exhausting all SQL connections and
+  stalling sequencer fibers past commitment worker timeout windows.
 
 Docker Compose publishes PostgreSQL on host port `5433` and container port
 `5432`.

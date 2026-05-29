@@ -6,7 +6,7 @@ This document covers some of the ways in which Sundial is designed to scale as n
 
 ## Transaction Processing
 
-The Sundial L2 has technically infinite TPS. This is made possible by using a rotating consensus algorithm in which node operators do not need to interact directly to produce blocks. This allows each operator to commit as many blocks in their shift as they wish. The upper limit is simply the operators hardware.
+The Sundial L2 architecture imposes no hard protocol-level TPS ceiling. Throughput is bounded by node operator hardware rather than by a fixed consensus parameter, which means hardware improvements and protocol optimizations translate directly into higher throughput. In practice, the relevant constraints are node hardware, database throughput, L1 anchoring frequency, and network latency.
 
 There are 2 ways in which this is intended to be scaled. If we treat the data as a stream, we can optimize for volumetric flow, using the following levers:
 
@@ -35,11 +35,11 @@ The limiting factor is the processing capabilities of the node and node operator
 
 ### Current TPS
 
-The Sundial L2 in its current immature state has achieved a TPS of approximately 800.
+Initial testnet validation has demonstrated sustained throughput of approximately 800 TPS, confirming the initial L2 throughput target. The target for stable institutional-grade testnet operation is 1,000 TPS.
 
 ### Anticipated TPS
 
-Although the theoretical TPS of the L2 is infinite, we estimate the practical TPS to be significantly lower due to real-world constraints. Factors such as network latency, hardware limitations, and the efficiency of offchain computation all play a role in determining the actual TPS that can be achieved.
+Practical TPS is constrained by real-world factors including network latency, node hardware, database throughput, and L1 anchoring frequency. The relationship between these constraints and throughput is modeled as:
 
 $$
 TPS = log_{2}(N_{tx} * \lambda_{hash}) + N_{tx} * \lambda_{proc}
@@ -48,10 +48,19 @@ $$
 Where:
 
 - $$N_{tx}$$ = Number of transactions received through the network within the frequency of a Cardano block (currently ~20s).
-- $$\lambda_{hash}$$ = Time taken for transactions core components to be added to the merkle hashes in the block header by the node.
+- $$\lambda_{hash}$$ = Time taken for transaction core components to be added to the Merkle hashes in the block header by the node.
 - $$\lambda_{proc}$$ = Time taken to process a transaction and place it in a block by the node.
 
-We estimate a $$\lambda_{proc}$$ of approximately 40μs and a $$\lambda_{hash}$$ of approximately 1ms, giving us an estimated TPS of approximately 24,985 TPS in the current network conditions.
+We estimate a $$\lambda_{proc}$$ of approximately 40μs and a $$\lambda_{hash}$$ of approximately 1ms. Under these parameters, the L2 computation model supports substantially higher throughput than the current testnet demonstrates. Practical TPS targets on commodity general-purpose infrastructure are:
+
+| Target                     | TPS   | Context                                                         |
+| :------------------------- | :---- | :-------------------------------------------------------------- |
+| Testnet baseline           | 800   | Validated through controlled load testing                       |
+| Testnet industrial         | 1,000 | Stable institutional-grade testnet operation                    |
+| Mainnet baseline           | 2,000 | Comparable to established payment network throughput benchmarks |
+| Practical mainnet estimate | 5,000 | Commodity general-purpose hardware, current L2 protocol         |
+
+Reaching throughput significantly above 5,000 TPS — towards a ceiling of approximately 20,000 TPS or higher — requires L1 protocol enhancements. See [L1 Scaling Path and Higher Throughput](#l1-scaling-path-and-higher-throughput) below.
 
 ## Finality & Latency
 
@@ -108,6 +117,18 @@ Where:
 - $$\tau_{cw}$$ = Challenge Window: the time period during which fraud proofs can be submitted against a block before it is considered final & merged into the confirmed state.
 
 The challenge window is a configurable parameter of the protocol, and can be adjusted based on the desired level of security and finality. A shorter challenge window results in faster true finality, but may increase the risk of fraud. A longer challenge window provides greater security, but may result in slower finality.
+
+## L1 Scaling Path and Higher Throughput
+
+The current Sundial L2 anchors block commitments directly to Cardano L1. The rate at which the L2 can finalize state is therefore bounded by L1 transaction throughput and block frequency. Scaling beyond approximately 5,000 TPS on the current architecture would require improvements to L1 data availability and state-channel throughput.
+
+One mechanism that would enable this is **Hydrozoa/Gummiworm**, a Cardano scaling concept that extends Hydra-style state channels into a more flexible L1 settlement layer. Rather than pushing every transaction directly through Cardano L1, users transact inside fast off-chain execution environments ("heads"). A broader coil validator group verifies and co-signs the effects that actually move funds on L1. This separates **execution speed** from **custody safety**: small execution groups can process transactions quickly without gaining unilateral control over user funds.
+
+For Cardano L1, this reduces the number of transactions that require immediate on-chain settlement. Deposits, withdrawals, trades, and balance updates can be batched, netted, or finalized through compact L1 effects rather than individual L1 transactions. L1 becomes the security and settlement anchor rather than the throughput bottleneck for every action.
+
+For Sundial, Hydrozoa/Gummiworm-style mechanisms could provide a significantly higher-throughput settlement substrate. Sundial could process many more user actions off-chain, then rely on these mechanisms for safe L1 anchoring, custody protection, and emergency exits. The result would be faster UX, lower fees, and throughput potentially in the 20,000+ TPS range, while preserving Cardano L1 as the final source of security.
+
+Sundial's current architecture is designed to be compatible with such an evolution. L1 scaling work of this kind represents a future protocol milestone, not a current implementation requirement.
 
 # Cross-Chain Scaling
 
