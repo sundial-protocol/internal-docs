@@ -63,31 +63,31 @@ The metrics endpoint is separate from the node API port.
 Counters are exported by the OpenTelemetry Prometheus exporter with a `_total`
 suffix.
 
-| Metric                         | Type    | Labels | Meaning                                                                     | Default usage                         |
-| ------------------------------ | ------- | ------ | --------------------------------------------------------------------------- | ------------------------------------- |
-| `tx_count_total`               | Counter | none   | Submitted transactions accepted by `POST /submit`.                          | Dashboard throughput signal.          |
-| `tx_queue_size`                | Gauge   | none   | Size of the in-memory transaction queue before processing.                   | Dashboard queue/backlog signal.       |
-| `mempool_tx_count`             | Gauge   | none   | Current number of transactions in `MempoolDB`.                              | Dashboard mempool signal.             |
-| `commit_block_count_total`     | Counter | none   | Number of committed Midgard blocks.                                         | Dashboard block production signal.    |
-| `commit_block_tx_count_total`  | Counter | none   | Number of transaction requests included in committed blocks.                 | Dashboard inclusion throughput signal. |
-| `commit_block_num_tx_count`    | Gauge   | none   | Transaction request count in the latest committed block.                     | Dashboard latest-block context.       |
-| `block_total_user_events_count` | Gauge  | none   | Deposit, withdrawal, and transaction-order event count in the latest block.  | Dashboard latest-block context.       |
-| `total_tx_size`                | Gauge   | none   | Total event size for the latest committed block.                             | Dashboard latest-block context.       |
-| `merge_block_count_total`      | Counter | none   | Number of blocks merged into confirmed state.                                | Dashboard merge throughput signal.    |
+| Metric                          | Type    | Labels | Meaning                                                                     | Default usage                          |
+| ------------------------------- | ------- | ------ | --------------------------------------------------------------------------- | -------------------------------------- |
+| `tx_count_total`                | Counter | none   | Submitted transactions accepted by `POST /submit`.                          | Dashboard throughput signal.           |
+| `tx_queue_size`                 | Gauge   | none   | Size of the in-memory transaction queue before processing.                  | Dashboard queue/backlog signal.        |
+| `mempool_tx_count`              | Gauge   | none   | Current number of transactions in `MempoolDB`.                              | Dashboard mempool signal.              |
+| `commit_block_count_total`      | Counter | none   | Number of committed Midgard blocks.                                         | Dashboard block production signal.     |
+| `commit_block_tx_count_total`   | Counter | none   | Number of transaction requests included in committed blocks.                | Dashboard inclusion throughput signal. |
+| `commit_block_num_tx_count`     | Gauge   | none   | Transaction request count in the latest committed block.                    | Dashboard latest-block context.        |
+| `block_total_user_events_count` | Gauge   | none   | Deposit, withdrawal, and transaction-order event count in the latest block. | Dashboard latest-block context.        |
+| `total_tx_size`                 | Gauge   | none   | Total event size for the latest committed block.                            | Dashboard latest-block context.        |
+| `merge_block_count_total`       | Counter | none   | Number of blocks merged into confirmed state.                               | Dashboard merge throughput signal.     |
 
 ## Infrastructure Metrics
 
 The local Docker Compose stack also scrapes metrics that do not originate inside
 the Midgard node code:
 
-| Metric                                      | Source                   | Meaning                                      | Default usage                    |
-| ------------------------------------------- | ------------------------ | -------------------------------------------- | -------------------------------- |
-| `up{job="midgard_nodes"}`                   | Prometheus target health | Scrape health for the Midgard node exporter. | Availability and scrape context. |
-| `container_memory_usage_bytes`              | cAdvisor                 | Container memory usage.                      | Grafana container dashboard.     |
-| `container_cpu_user_seconds_total`          | cAdvisor                 | Container CPU usage counter.                 | Grafana container dashboard.     |
-| `container_network_receive_bytes_total`     | cAdvisor                 | Container receive traffic counter.           | Grafana container dashboard.     |
-| `container_network_transmit_bytes_total`    | cAdvisor                 | Container transmit traffic counter.          | Grafana container dashboard.     |
-| `container_last_seen`                       | cAdvisor                 | Last time cAdvisor saw each container.       | Grafana container dashboard.     |
+| Metric                                   | Source                   | Meaning                                      | Default usage                    |
+| ---------------------------------------- | ------------------------ | -------------------------------------------- | -------------------------------- |
+| `up{job="midgard_nodes"}`                | Prometheus target health | Scrape health for the Midgard node exporter. | Availability and scrape context. |
+| `container_memory_usage_bytes`           | cAdvisor                 | Container memory usage.                      | Grafana container dashboard.     |
+| `container_cpu_user_seconds_total`       | cAdvisor                 | Container CPU usage counter.                 | Grafana container dashboard.     |
+| `container_network_receive_bytes_total`  | cAdvisor                 | Container receive traffic counter.           | Grafana container dashboard.     |
+| `container_network_transmit_bytes_total` | cAdvisor                 | Container transmit traffic counter.          | Grafana container dashboard.     |
+| `container_last_seen`                    | cAdvisor                 | Last time cAdvisor saw each container.       | Grafana container dashboard.     |
 
 ## Label Policy
 

@@ -1,6 +1,7 @@
 # Sundial Layer CLI Specification
 
 ## Setup
+
 ### CLI Commands
 
 The Command-Line Interface (CLI) tools for managing operator services within the Sundial protocol. These provide a range of commands for deploying, configuring, monitoring, and maintaining operator nodes.
@@ -69,7 +70,7 @@ export const LayerNodeConfig = S.Struct({
 
 ### SUNDIAL_NODE_SOCKET_PATH
 
-Sundial CLI uses the *node-to-client* protocol to communicate with the node. This requires setting an environment variable for the node socket path. Ensure you use the path declared when starting the node.
+Sundial CLI uses the _node-to-client_ protocol to communicate with the node. This requires setting an environment variable for the node socket path. Ensure you use the path declared when starting the node.
 
 ```bash
 export SUNDIAL_NODE_SOCKET_PATH=~/node.socket
@@ -77,12 +78,12 @@ export SUNDIAL_NODE_SOCKET_PATH=~/node.socket
 
 ### SUNDIAL_NODE_NETWORK_ID
 
-Each network has a unique identifier (--mainnet or --testnet-magic NATURAL). This is used by the node-to-client protocol to ensure communication with a node on the desired network. It is useful to set up an environment variable for the network ID. Alternatively, you can provide the flag `--testnet-magic <network-id>` with each command that interacts with the node.  
+Each network has a unique identifier (--mainnet or --testnet-magic NATURAL). This is used by the node-to-client protocol to ensure communication with a node on the desired network. It is useful to set up an environment variable for the network ID. Alternatively, you can provide the flag `--testnet-magic <network-id>` with each command that interacts with the node.
 
 - **Mainnet**
 
 ```bash
-export SUNDIAL_NODE_NETWORK_ID=mainnet 
+export SUNDIAL_NODE_NETWORK_ID=mainnet
 ```
 
 - **Testnet**

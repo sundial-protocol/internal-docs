@@ -1,15 +1,15 @@
 **Document Metadata**
 
-* **Author:** Vic Genin
+- **Author:** Vic Genin
 
-* **Date:** 2026-05-01
+- **Date:** 2026-05-01
 
 **Versioning History**
 
-| Version | Date | Author | Description |
-| :---- | :---- | :---- | :---- |
-| 1.0 | 2026-02-01 | Vic Genin | Initial Draft |
-|  |  |  |  |
+| Version | Date       | Author    | Description   |
+| :------ | :--------- | :-------- | :------------ |
+| 1.0     | 2026-02-01 | Vic Genin | Initial Draft |
+|         |            |           |               |
 
 # Master Test Plan for Sundial Staging Environment and Sundial Testnet
 
@@ -22,6 +22,8 @@ Testing will verify that Sundial services can be deployed, operated, monitored, 
 The objective is to produce repeatable evidence that the Sundial staging and testnet environments operate reliably under defined validation conditions and provide a stable foundation for further protocol hardening, audit preparation, and production-readiness work.
 
 This MTP is structured as a testnet validation plan. It is intended to verify operational behavior, integration behavior, baseline security posture, and controlled-load stability of the Sundial staging and testnet environments.
+
+Detailed scalability and stress testing procedures, target TPS tiers, load-driver requirements, benchmark metrics, stop criteria, and final scalability report templates are defined in the controlled-load addendum: [`scalability-stress-test-report.md`](scalability-stress-test-report.md).
 
 The plan does not attempt to replace production-readiness reviews, formal verification, external audit processes, or mainnet launch assessments. Those activities are separate hardening steps and may be conducted after testnet validation.
 
@@ -67,35 +69,35 @@ Testing includes functional, integration, regression, baseline security, and con
 
 The validation scope includes:
 
-* service deployment and startup
+- service deployment and startup
 
-* health and readiness checks
+- health and readiness checks
 
-* API request/response behavior
+- API request/response behavior
 
-* transaction submission
+- transaction submission
 
-* mempool processing
+- mempool processing
 
-* block construction
+- block construction
 
-* L1 event ingestion
+- L1 event ingestion
 
-* local execution and state updates
+- local execution and state updates
 
-* state root generation and tracking
+- state root generation and tracking
 
-* background worker execution
+- background worker execution
 
-* log and metric observability
+- log and metric observability
 
-* negative input handling
+- negative input handling
 
-* automated regression testing
+- automated regression testing
 
-* baseline service-level security checks
+- baseline service-level security checks
 
-* controlled load and stability testing
+- controlled load and stability testing
 
 The purpose of this scope is to verify that the Sundial staging and testnet environments can be deployed, operated, monitored, and exercised through defined validation scenarios.
 
@@ -107,23 +109,23 @@ Testing will be performed against defined configurations and supported testnet w
 
 The following areas are outside the scope of this MTP:
 
-* mainnet deployment validation
+- mainnet deployment validation
 
-* production funds handling
+- production funds handling
 
-* external third-party audit certification
+- external third-party audit certification
 
-* production capacity benchmarking
+- production capacity benchmarking
 
-* long-duration economic-security analysis
+- long-duration economic-security analysis
 
-* production incident response procedures
+- production incident response procedures
 
-* production operator onboarding
+- production operator onboarding
 
-* post-testnet protocol hardening activities
+- post-testnet protocol hardening activities
 
-* non-testnet operational processes
+- non-testnet operational processes
 
 These items may be addressed separately as part of production-readiness, hardening, audit, or mainnet-preparation workstreams.
 
@@ -168,6 +170,8 @@ This validation does not replace external audit, formal verification, or product
 ### 5.6 Controlled Load Validation
 
 Controlled load validation will assess stability of supported staging and testnet workflows under defined load conditions. The objective is to observe service behavior, response latency, error rate, resource usage, queued processing, worker execution, transaction handling, and block construction behavior while load is applied.
+
+The detailed scalability and stress test approach is maintained as an extension to this MTP in [`scalability-stress-test-report.md`](scalability-stress-test-report.md). That addendum defines the target-driven transaction volumes, load-driver contract, required metrics, acceptance thresholds, reporting templates, and implementation backlog for benchmark-grade evidence collection.
 
 Controlled load testing is not intended to establish final production throughput limits. Results will be used to identify stability issues, operational constraints, and recommended production-readiness follow-up items.
 
@@ -277,25 +281,25 @@ Testing will be performed in the Sundial staging environment and Sundial testnet
 
 The environment baseline should include:
 
-* required Sundial services
+- required Sundial services
 
-* service configuration files or environment variables
+- service configuration files or environment variables
 
-* required network connectivity between services
+- required network connectivity between services
 
-* exposed system interfaces for validation
+- exposed system interfaces for validation
 
-* logging and metrics collection
+- logging and metrics collection
 
-* test accounts, keys, or credentials where applicable
+- test accounts, keys, or credentials where applicable
 
-* test data required for supported workflows
+- test data required for supported workflows
 
-* deployment automation or documented deployment procedure
+- deployment automation or documented deployment procedure
 
-* regression test execution capability
+- regression test execution capability
 
-* controlled load test execution capability
+- controlled load test execution capability
 
 Before formal test execution begins, an environment readiness check will be performed. The readiness check will confirm that required services are available, configuration is present, health checks are responding, logs are accessible, metrics are available, and required test data or credentials are prepared.
 
@@ -309,19 +313,19 @@ Test data must be controlled and traceable to the test cases in which it is used
 
 The test data approach will include:
 
-* valid data for supported workflow execution
+- valid data for supported workflow execution
 
-* invalid data for negative input handling
+- invalid data for negative input handling
 
-* boundary data for size and field validation
+- boundary data for size and field validation
 
-* repeatable transaction data where applicable
+- repeatable transaction data where applicable
 
-* controlled input sets for regression tests
+- controlled input sets for regression tests
 
-* controlled payload sets for baseline security validation
+- controlled payload sets for baseline security validation
 
-* controlled request sets for load testing
+- controlled request sets for load testing
 
 Evidence collected during test execution should identify the type of data used without exposing sensitive values unnecessarily.
 
@@ -339,21 +343,21 @@ Retesting will occur after fixes, configuration updates, or environment correcti
 
 Testing will be considered complete when:
 
-* planned functional tests for supported staging and testnet workflows have been executed;
+- planned functional tests for supported staging and testnet workflows have been executed;
 
-* integration scenarios produce expected observable outputs;
+- integration scenarios produce expected observable outputs;
 
-* automated regression tests can be executed repeatably;
+- automated regression tests can be executed repeatably;
 
-* no unresolved Critical defects remain within the tested scope;
+- no unresolved Critical defects remain within the tested scope;
 
-* baseline security checks identify no unresolved Critical findings;
+- baseline security checks identify no unresolved Critical findings;
 
-* controlled load testing completes without unrecoverable service failure;
+- controlled load testing completes without unrecoverable service failure;
 
-* test execution logs, reports, metrics, and defect records are collected;
+- test execution logs, reports, metrics, and defect records are collected;
 
-* any remaining non-critical findings are documented with severity, impact, and recommended follow-up.
+- any remaining non-critical findings are documented with severity, impact, and recommended follow-up.
 
 Completion of the validation cycle does not imply completion of production-readiness reviews, external audits, formal verification activities, or mainnet launch assessments. It indicates that the defined validation scenarios for the Sundial staging environment and Sundial testnet have been executed and that the resulting evidence supports continued production-readiness follow-up.
 
@@ -361,29 +365,29 @@ Completion of the validation cycle does not imply completion of production-readi
 
 Testing may begin when the following entry criteria are satisfied:
 
-* Sundial staging environment is available for validation.
+- Sundial staging environment is available for validation.
 
-* Sundial testnet is available for supported workflow execution.
+- Sundial testnet is available for supported workflow execution.
 
-* Required services can be deployed or accessed.
+- Required services can be deployed or accessed.
 
-* Required configuration is available.
+- Required configuration is available.
 
-* Health and readiness endpoints are reachable where applicable.
+- Health and readiness endpoints are reachable where applicable.
 
-* Logs and metrics are accessible to the test team.
+- Logs and metrics are accessible to the test team.
 
-* Test data and validation credentials are available where required.
+- Test data and validation credentials are available where required.
 
-* Test cases or validation checklists are prepared.
+- Test cases or validation checklists are prepared.
 
-* Defect register is available for recording findings.
+- Defect register is available for recording findings.
 
-* Regression test execution method is available.
+- Regression test execution method is available.
 
-* Baseline security validation tools or scripts are available where applicable.
+- Baseline security validation tools or scripts are available where applicable.
 
-* Controlled load testing approach and limits are defined.
+- Controlled load testing approach and limits are defined.
 
 If any entry criterion is not met, the validation owner will determine whether testing can proceed with limitations or whether execution should be delayed until the environment is ready.
 
@@ -391,21 +395,21 @@ If any entry criterion is not met, the validation owner will determine whether t
 
 Testing may be suspended if any of the following conditions occur:
 
-* critical environment instability prevents reliable execution;
+- critical environment instability prevents reliable execution;
 
-* required services cannot be started or accessed;
+- required services cannot be started or accessed;
 
-* health or readiness checks fail consistently;
+- health or readiness checks fail consistently;
 
-* test data or credentials are unavailable;
+- test data or credentials are unavailable;
 
-* logging or metrics are unavailable for required evidence collection;
+- logging or metrics are unavailable for required evidence collection;
 
-* a Critical defect prevents continuation of dependent scenarios;
+- a Critical defect prevents continuation of dependent scenarios;
 
-* controlled load testing causes unrecoverable service failure;
+- controlled load testing causes unrecoverable service failure;
 
-* security validation identifies a Critical issue requiring immediate correction.
+- security validation identifies a Critical issue requiring immediate correction.
 
 Testing may resume when the blocking condition is resolved, the affected services are available, and the validation owner confirms that reliable execution can continue. Resumption may include repeating affected setup steps, rerunning impacted test cases, and executing targeted regression checks.
 
@@ -415,21 +419,21 @@ Security validation will focus on service-level and interface-level risks observ
 
 The security test scope includes:
 
-* malformed input handling
+- malformed input handling
 
-* oversized payload handling
+- oversized payload handling
 
-* API error handling
+- API error handling
 
-* unauthorized or unsupported request behavior
+- unauthorized or unsupported request behavior
 
-* configuration exposure checks
+- configuration exposure checks
 
-* dependency and static analysis checks
+- dependency and static analysis checks
 
-* sensitive data leakage in logs
+- sensitive data leakage in logs
 
-* basic abuse-case testing for exposed endpoints
+- basic abuse-case testing for exposed endpoints
 
 The objective is to identify and resolve Critical service-level findings before the testnet validation package is finalized.
 
@@ -441,31 +445,33 @@ The baseline security validation activity is limited to observable service-level
 
 Controlled load testing will be performed against supported staging and testnet workflows.
 
+Controlled load execution must follow the detailed scalability and stress test plan addendum in [`scalability-stress-test-report.md`](scalability-stress-test-report.md) when the objective is to make scalability, throughput, latency, cost, stability, or before/after optimization claims.
+
 The load test scope includes:
 
-* concurrent API requests
+- concurrent API requests
 
-* concurrent transaction submissions
+- concurrent transaction submissions
 
-* sustained transaction submission over a defined test window
+- sustained transaction submission over a defined test window
 
-* block construction behavior during load
+- block construction behavior during load
 
-* worker stability during queued processing
+- worker stability during queued processing
 
-* response latency
+- response latency
 
-* error rate
+- error rate
 
-* resource usage observations
+- resource usage observations
 
 The objective is to demonstrate environment stability under defined load conditions, not to establish final production throughput limits.
 
-Controlled load testing will use defined request rates, concurrency levels, payload types, duration, and observation points. Load execution will be monitored through logs, metrics, resource usage, response status codes, latency measurements, error rates, worker queues, transaction processing observations, and block construction behavior.
+Controlled load testing will use defined request rates, target TPS tiers, load-driver profiles, payload types, duration, recovery windows, and observation points. Load execution will be monitored through logs, metrics, resource usage, response status codes, latency measurements, error rates, worker queues, transaction processing observations, block construction behavior, and L1 commitment cost evidence where applicable.
 
 Load testing will be executed in a controlled manner to avoid uncontrolled disruption to the validation environment. Test limits will be documented before execution. If unrecoverable service failure occurs, the test will be stopped, evidence will be collected, and a defect will be recorded.
 
-The final load test summary will document test conditions, execution duration, request volumes, observed latency, error rates, resource usage, service stability, worker behavior, and recommended follow-up actions.
+The final load test summary will document test conditions, execution duration, target and achieved transaction rates, request volumes, observed latency, error rates, resource usage, service stability, worker behavior, cost observations where applicable, and recommended follow-up actions. Formal scalability benchmark reports should use the templates and evidence requirements defined in the addendum.
 
 ## 16\. Defect Management
 
@@ -473,35 +479,35 @@ Defects identified during testing will be tracked in a private defect register a
 
 Each defect record will include:
 
-* defect ID
+- defect ID
 
-* component
+- component
 
-* description
+- description
 
-* severity
+- severity
 
-* test case reference
+- test case reference
 
-* reproduction steps
+- reproduction steps
 
-* status
+- status
 
-* resolution notes
+- resolution notes
 
-* evidence link, log reference, or commit reference
+- evidence link, log reference, or commit reference
 
 Public issue creation is not required for this validation cycle. Where fixes are applied, the defect register may reference commits, pull requests, or release notes.
 
 Defect severity will be assigned based on impact to the tested scope. Suggested severity definitions are:
 
-* Critical: Prevents execution of major supported validation workflows, causes unrecoverable service failure under defined validation conditions, or exposes a Critical baseline security concern.
+- Critical: Prevents execution of major supported validation workflows, causes unrecoverable service failure under defined validation conditions, or exposes a Critical baseline security concern.
 
-* High: Causes failure of an important supported workflow, significant inconsistency in observable outputs, or serious operational instability requiring correction.
+- High: Causes failure of an important supported workflow, significant inconsistency in observable outputs, or serious operational instability requiring correction.
 
-* Medium: Causes partial workflow failure, inconsistent behavior with a defined workaround, or degraded observability that does not prevent completion of the validation cycle.
+- Medium: Causes partial workflow failure, inconsistent behavior with a defined workaround, or degraded observability that does not prevent completion of the validation cycle.
 
-* Low: Minor functional, documentation, logging, or usability issue that does not materially affect validation outcomes.
+- Low: Minor functional, documentation, logging, or usability issue that does not materially affect validation outcomes.
 
 Defects will be reviewed during execution. Critical defects must be resolved or formally documented with an approved disposition before completion of the validation cycle. Non-critical findings may remain open if their severity, impact, and recommended follow-up are documented in the final validation report.
 
@@ -509,27 +515,31 @@ Defects will be reviewed during execution. Critical defects must be resolved or 
 
 The following deliverables will be produced as part of the validation cycle:
 
-* approved Master Test Plan
+- approved Master Test Plan
 
-* test case inventory or validation checklist
+- test case inventory or validation checklist
 
-* test execution records
+- test execution records
 
-* automated regression results
+- automated regression results
 
-* baseline security validation summary
+- baseline security validation summary
 
-* controlled load test summary
+- approved scalability and stress test plan addendum, where controlled-load scalability claims are in scope
 
-* defect register
+- controlled load test summary
 
-* evidence package containing logs, metrics, reports, and references
+- scalability and stress benchmark report, where executed
 
-* final validation report
+- defect register
 
-* residual risk summary
+- evidence package containing logs, metrics, reports, and references
 
-* production-readiness follow-up recommendations
+- final validation report
+
+- residual risk summary
+
+- production-readiness follow-up recommendations
 
 Deliverables must be stored in an agreed internal location with appropriate access control. Evidence should be organized so that reviewers can trace validation conclusions back to executed test cases, logs, metrics, reports, and defect records.
 
@@ -571,27 +581,29 @@ Evidence must be organized in a way that supports traceability. Each evidence it
 
 The validation report will include:
 
-* validation summary
+- validation summary
 
-* environment summary
+- environment summary
 
-* scope confirmation
+- scope confirmation
 
-* test execution summary
+- test execution summary
 
-* defect summary
+- defect summary
 
-* baseline security validation summary
+- baseline security validation summary
 
-* controlled load validation summary
+- controlled load validation summary
 
-* evidence references
+- scalability and stress benchmark summary, where executed under the addendum
 
-* residual risks
+- evidence references
 
-* recommended production-readiness follow-up
+- residual risks
 
-* final conclusion
+- recommended production-readiness follow-up
+
+- final conclusion
 
 The report should clearly distinguish between completed validation activities and future production-readiness activities.
 
@@ -601,23 +613,23 @@ The validation effort may be affected by environment instability, incomplete tes
 
 Mitigation actions include:
 
-* performing environment readiness checks before execution;
+- performing environment readiness checks before execution;
 
-* confirming logs and metrics are available;
+- confirming logs and metrics are available;
 
-* preparing controlled test data before execution;
+- preparing controlled test data before execution;
 
-* tracking blocked tests separately;
+- tracking blocked tests separately;
 
-* prioritizing Critical and High defects;
+- prioritizing Critical and High defects;
 
-* rerunning impacted tests after fixes;
+- rerunning impacted tests after fixes;
 
-* maintaining clear evidence references;
+- maintaining clear evidence references;
 
-* documenting residual non-critical findings;
+- documenting residual non-critical findings;
 
-* separating testnet validation conclusions from production-readiness conclusions.
+- separating testnet validation conclusions from production-readiness conclusions.
 
 Where risks cannot be fully mitigated within the validation cycle, they will be documented in the final validation report with recommended follow-up actions.
 
@@ -639,21 +651,21 @@ If changes occur during execution, the final validation report should identify m
 
 This MTP is based on the following assumptions:
 
-* Sundial staging environment and Sundial testnet are available for validation.
+- Sundial staging environment and Sundial testnet are available for validation.
 
-* Supported testnet workflows are defined for execution.
+- Supported testnet workflows are defined for execution.
 
-* Exposed system interfaces are available for testing.
+- Exposed system interfaces are available for testing.
 
-* Required logs and metrics are accessible.
+- Required logs and metrics are accessible.
 
-* Test data and validation credentials are available where needed.
+- Test data and validation credentials are available where needed.
 
-* Defects can be recorded in a private defect register.
+- Defects can be recorded in a private defect register.
 
-* Regression tests can be executed repeatably.
+- Regression tests can be executed repeatably.
 
-* Controlled load testing can be performed within agreed limits.
+- Controlled load testing can be performed within agreed limits.
 
 Constraints may include environment availability, test data limitations, service access restrictions, monitoring limitations, dependency availability, execution windows, or load test limits. Any constraint that affects validation coverage or conclusions will be documented in the final validation report.
 
@@ -665,21 +677,21 @@ Traceability will support review of whether planned functional, integration, reg
 
 A traceability matrix may include the following fields:
 
-* validation area
+- validation area
 
-* test objective
+- test objective
 
-* test case ID
+- test case ID
 
-* test type
+- test type
 
-* execution status
+- execution status
 
-* defect ID, if applicable
+- defect ID, if applicable
 
-* evidence reference
+- evidence reference
 
-* final disposition
+- final disposition
 
 ## 25\. Final Validation Conclusion
 
@@ -701,130 +713,130 @@ Approvers may include representatives from quality assurance, engineering, DevOp
 
 Each test case should be documented using a consistent format:
 
-* Test Case ID
+- Test Case ID
 
-* Test Case Name
+- Test Case Name
 
-* Validation Area
+- Validation Area
 
-* Objective
+- Objective
 
-* Preconditions
+- Preconditions
 
-* Test Data
+- Test Data
 
-* Execution Steps
+- Execution Steps
 
-* Expected Result
+- Expected Result
 
-* Actual Result
+- Actual Result
 
-* Status
+- Status
 
-* Defect Reference
+- Defect Reference
 
-* Evidence Reference
+- Evidence Reference
 
-* Tester
+- Tester
 
-* Execution Date
+- Execution Date
 
 ## Appendix B: Example Validation Areas
 
 The following validation areas may be used to organize test cases:
 
-* ENV: Environment readiness
+- ENV: Environment readiness
 
-* DEP: Deployment and startup
+- DEP: Deployment and startup
 
-* HLT: Health and readiness checks
+- HLT: Health and readiness checks
 
-* API: API behavior
+- API: API behavior
 
-* TXN: Transaction submission
+- TXN: Transaction submission
 
-* MEM: Mempool processing
+- MEM: Mempool processing
 
-* BLK: Block construction
+- BLK: Block construction
 
-* L1E: L1 event ingestion
+- L1E: L1 event ingestion
 
-* WRK: Background worker execution
+- WRK: Background worker execution
 
-* STA: Local execution and state updates
+- STA: Local execution and state updates
 
-* SRT: State root generation and tracking
+- SRT: State root generation and tracking
 
-* OBS: Observability
+- OBS: Observability
 
-* NEG: Negative input handling
+- NEG: Negative input handling
 
-* REG: Automated regression testing
+- REG: Automated regression testing
 
-* SEC: Baseline security validation
+- SEC: Baseline security validation
 
-* LOD: Controlled load validation
+- LOD: Controlled load validation
 
 ## Appendix C: Evidence Package Index
 
 The validation evidence package should include references to:
 
-* environment readiness records
+- environment readiness records
 
-* deployment logs
+- deployment logs
 
-* health check outputs
+- health check outputs
 
-* API request and response samples
+- API request and response samples
 
-* transaction submission records
+- transaction submission records
 
-* mempool processing logs
+- mempool processing logs
 
-* block construction evidence
+- block construction evidence
 
-* L1 event ingestion evidence
+- L1 event ingestion evidence
 
-* background worker logs
+- background worker logs
 
-* local state update evidence
+- local state update evidence
 
-* state root records
+- state root records
 
-* observability dashboards or metric exports
+- observability dashboards or metric exports
 
-* negative test results
+- negative test results
 
-* automated regression test reports
+- automated regression test reports
 
-* baseline security validation reports
+- baseline security validation reports
 
-* controlled load test reports
+- controlled load test reports
 
-* defect register export
+- defect register export
 
-* final validation report
+- final validation report
 
 ## Appendix D: Residual Risk Summary Format
 
 Residual risks should be documented using a consistent format:
 
-* Risk ID
+- Risk ID
 
-* Description
+- Description
 
-* Affected Component
+- Affected Component
 
-* Severity
+- Severity
 
-* Impact
+- Impact
 
-* Current Status
+- Status
 
-* Recommended Follow-Up
+- Recommended Follow-Up
 
-* Owner
+- Owner
 
-* Target Resolution Window
+- Target Resolution Window
 
 Residual risks should be limited to non-critical findings unless an approved exception is documented. Any remaining risk must be reviewed in the context of production-readiness follow-up and should not be treated as a substitute for later hardening, audit, or mainnet-preparation activities.
