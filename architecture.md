@@ -1,8 +1,8 @@
 # Midgard Demo Architecture
 
 This document describes the Midgard project currently vendored under `demo/`.
-It is based on the active code in `demo/midgard-node`,
-`demo/midgard-sdk`, `demo/midgard-ts`, and `demo/midgard-manager`.
+It is based on the active code in [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node),
+[`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk), `demo/midgard-ts`, and `demo/midgard-manager`.
 
 ## Context
 
@@ -29,8 +29,8 @@ The active Midgard folders are:
 
 | Folder                 | Purpose                                                                                                                                |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `demo/midgard-node`    | Runtime node, HTTP RPC surface, PostgreSQL access, background fibers, block commitment/submission, L1 user-event sync, monitoring.     |
-| `demo/midgard-sdk`     | Off-chain SDK for building operator, watcher, initialization, state-queue, user-event, settlement, and fraud-proof transactions.       |
+| [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)    | Runtime node, HTTP RPC surface, PostgreSQL access, background fibers, block commitment/submission, L1 user-event sync, monitoring.     |
+| [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk)     | Off-chain SDK for building operator, watcher, initialization, state-queue, user-event, settlement, and fraud-proof transactions.       |
 | `demo/midgard-ts`      | Pure TypeScript binary codec and Cardano type round-trip helpers for Midgard blocks, transactions, outputs, deposits, and withdrawals. |
 | `demo/midgard-manager` | CLI and transaction generator for configuring a node endpoint and generating/submitting test L2 transactions.                          |
 | `demo/schemes`         | Excalidraw protocol diagrams and an older project-structure sketch.                                                                    |
@@ -71,13 +71,13 @@ External dependencies are:
 - `@ethereumjs/mpt`
 - `@aiken-lang/merkle-patricia-forestry`
 - Aiken-generated Plutus V3 blueprints under
-  `demo/midgard-node/blueprints/always-succeeds`
+  [`sundial-node/blueprints/always-succeeds`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/blueprints/always-succeeds)
 - Vitest for node/sdk tests; Jest remains in `midgard-ts`
 - Docker Compose for local runtime and monitoring
 
 ## Node Boot Flow
 
-`demo/midgard-node/src/index.ts` loads `.env`, registers the `listen` command,
+[`sundial-node/src/index.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/index.ts) loads `.env`, registers the `listen` command,
 and runs `runNode(withMonitoring)` with these Effect services:
 
 - `NodeConfig`
@@ -103,7 +103,7 @@ and runs `runNode(withMonitoring)` with these Effect services:
 
 ### HTTP RPC server
 
-The server lives in `demo/midgard-node/src/commands/listen.ts`.
+The server lives in [`sundial-node/src/commands/listen.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/commands/listen.ts).
 
 It exposes unversioned RPC-style routes such as:
 
@@ -155,7 +155,7 @@ The fetch window is tracked in memory by
 ### Block commitment
 
 `blockCommitmentFiber` periodically starts a worker thread implemented under
-`demo/midgard-node/src/workers/block-commitment.ts`.
+[`sundial-node/src/workers/block-commitment.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/workers/block-commitment.ts).
 
 The commitment path:
 
@@ -226,7 +226,7 @@ runtime, Prometheus scrapes `midgard-node:9464`, Grafana runs on host port
 ## Data Model
 
 The PostgreSQL tables are documented in
-`demo/midgard-node/DATA_STORAGE.md`. The current table set is:
+[`sundial-node/DATA_STORAGE.md`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/DATA_STORAGE.md). The current table set is:
 
 - `AddressHistoryDB`
 - `BlocksDB`
@@ -287,7 +287,7 @@ The current processing model is:
 
 ## Midgard SDK
 
-`demo/midgard-sdk` is the off-chain transaction construction library. It
+[`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk) is the off-chain transaction construction library. It
 exports modules for:
 
 - protocol parameters,
@@ -309,6 +309,10 @@ The node imports it as:
 ```ts
 import * as SDK from "@al-ft/midgard-sdk";
 ```
+
+For which validator each module targets, and how much of that is the real
+`onchain/aiken` implementation versus this demo's always-succeeds
+placeholders, see [smart-contracts.md](./smart-contracts.md).
 
 ## Midgard TS Codec
 
@@ -339,3 +343,5 @@ through `POST /submit`. The node-status command currently probes
 
 - [API](./api.md)
 - [Environment](./environment.md)
+- [Smart Contract Interactions](./smart-contracts.md)
+- [Security Best Practices](./security.md)

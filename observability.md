@@ -1,11 +1,13 @@
 # Observability
 
-`demo/midgard-node` provides a Docker Compose stack for local runtime +
-observability:
+[`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)
+provides a Docker Compose stack for local runtime + observability:
 
-- `demo/midgard-node/docker-compose.yaml` (Midgard node + Postgres +
-  Prometheus + Loki + Promtail + cAdvisor + Grafana + Tempo)
-- `demo/midgard-node/docker-compose.dev.yaml` (Midgard node + Postgres only)
+- [`sundial-node/docker-compose.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docker-compose.yaml)
+  (Midgard node + Postgres + Prometheus + Loki + Promtail + cAdvisor +
+  Grafana + Tempo)
+- [`sundial-node/docker-compose.dev.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docker-compose.dev.yaml)
+  (Midgard node + Postgres only)
 
 ## Prerequisites
 
@@ -168,8 +170,10 @@ Prometheus should include scrape jobs for:
   - verify `OLTP_EXPORTER_URL=http://tempo:4318/v1/traces` is active in the
     Midgard node container.
 - Grafana opens but dashboards or data sources are missing:
-  - verify the provisioning mounts under `demo/midgard-node/grafana/` exist and
-    the `grafana` service started after Prometheus, Loki, and Tempo.
+  - verify the provisioning mounts under
+    [`sundial-node/grafana`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/grafana)
+    exist and the `grafana` service started after Prometheus, Loki, and
+    Tempo.
 - Local port conflicts:
   - check for existing services on ports `3000`, `3001`, `5433`, `8080`,
     `9090`, `3100`, `3200`, `4317`, or `4318`, then stop them or adjust the

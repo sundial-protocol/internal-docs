@@ -1,12 +1,14 @@
 # Telemetry
 
-`demo/midgard-node` exposes scrapeable Prometheus metrics from the Midgard node
-process when it is started with monitoring enabled.
+[`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)
+exposes scrapeable Prometheus metrics from the Midgard node process when it
+is started with monitoring enabled.
 
 This document focuses on application metrics, tracing, and telemetry semantics
 for the demo node. The demo also ships a local/container observability stack
 through Docker Compose: Prometheus, Grafana, Loki, Promtail, Tempo, and
-cAdvisor. The stack configuration lives under `demo/midgard-node/*`.
+cAdvisor. The stack configuration lives under
+[`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node).
 
 ## Endpoints
 
@@ -30,25 +32,25 @@ Prometheus scrapes the node through the `midgard_nodes` job at
 
 Node telemetry setup lives in:
 
-- `demo/midgard-node/src/commands/listen.ts`
-- `demo/midgard-node/src/services/config.ts`
+- [`sundial-node/src/commands/listen.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/commands/listen.ts)
+- [`sundial-node/src/services/config.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/services/config.ts)
 
 Application metrics live in:
 
-- `demo/midgard-node/src/commands/listen.ts`
-- `demo/midgard-node/src/fibers/block-commitment.ts`
-- `demo/midgard-node/src/fibers/monitor-mempool.ts`
-- `demo/midgard-node/src/fibers/tx-queue-processor.ts`
-- `demo/midgard-node/src/transactions/state-queue/merge-to-confirmed-state.ts`
+- [`sundial-node/src/commands/listen.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/commands/listen.ts)
+- [`sundial-node/src/fibers/block-commitment.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/fibers/block-commitment.ts)
+- [`sundial-node/src/fibers/monitor-mempool.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/fibers/monitor-mempool.ts)
+- [`sundial-node/src/fibers/tx-queue-processor.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/fibers/tx-queue-processor.ts)
+- [`sundial-node/src/transactions/state-queue/merge-to-confirmed-state.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/transactions/state-queue/merge-to-confirmed-state.ts)
 
 Observability stack configuration lives in:
 
-- `demo/midgard-node/docker-compose.yaml`
-- `demo/midgard-node/prometheus.yml`
-- `demo/midgard-node/grafana/*`
-- `demo/midgard-node/loki-config.yaml`
-- `demo/midgard-node/promtail-config.yaml`
-- `demo/midgard-node/tempo.yaml`
+- [`sundial-node/docker-compose.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docker-compose.yaml)
+- [`sundial-node/prometheus.yml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/prometheus.yml)
+- [`sundial-node/grafana`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/grafana)
+- [`sundial-node/loki-config.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/loki-config.yaml)
+- [`sundial-node/promtail-config.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/promtail-config.yaml)
+- [`sundial-node/tempo.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/tempo.yaml)
 
 ## Metrics Endpoint Env
 
@@ -81,7 +83,7 @@ The local Docker Compose stack also scrapes metrics that do not originate inside
 the Midgard node code:
 
 | Metric                                   | Source                   | Meaning                                      | Default usage                    |
-| ---------------------------------------- | ------------------------ | -------------------------------------------- | -------------------------------- |
+| ---------------------------------------- | ------------------------ | --------------------------------------------- | --------------------------------- |
 | `up{job="midgard_nodes"}`                | Prometheus target health | Scrape health for the Midgard node exporter. | Availability and scrape context. |
 | `container_memory_usage_bytes`           | cAdvisor                 | Container memory usage.                      | Grafana container dashboard.     |
 | `container_cpu_user_seconds_total`       | cAdvisor                 | Container CPU usage counter.                 | Grafana container dashboard.     |

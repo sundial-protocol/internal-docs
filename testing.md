@@ -11,7 +11,7 @@ The repository uses:
 - integration tests for real internal wiring behind a controlled test harness,
 - Dockerized end-to-end or system tests for live local runtime behavior.
 
-The current seed suite in `demo/midgard-node` runs through `pnpm test`; as the
+The current seed suite in [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node) runs through `pnpm test`; as the
 suite is split out, those tests should map into the command structure below.
 Legacy tests that still live outside the current `unit/` and `integration/`
 folder split remain intentionally supported through
@@ -190,10 +190,10 @@ as the include pattern, a 420 second timeout, and `bail: 3`.
 4. tear the stack down.
 
 Preferred local setup: `demo/midgard-node/.env` exists (bootstrap once with
-`cp .env.example .env` from `demo/midgard-node`).
+`cp .env.example .env` from [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)).
 
 This flow should build and run the Docker image path from
-`demo/midgard-node/Dockerfile` for test parity with runtime behavior. If the
+[`sundial-node/Dockerfile`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/Dockerfile) for test parity with runtime behavior. If the
 configured host Postgres or API port is unavailable, the wrapper should
 auto-select a free host port and export it for the host-side Vitest process.
 
@@ -254,6 +254,6 @@ Current demo validation commands:
 
 ## Related Docs
 
-- [Midgard Node README](../../demo/midgard-node/README.md)
-- [Midgard Node Data Storage](../../demo/midgard-node/DATA_STORAGE.md)
-- [Midgard Node Process Logic](../../demo/midgard-node/PROCESS_LOGIC.md)
+- [`sundial-node/README.md`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/README.md)
+- [`sundial-node/DATA_STORAGE.md`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/DATA_STORAGE.md)
+- [`sundial-node/PROCESS_LOGIC.md`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/PROCESS_LOGIC.md)

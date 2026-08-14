@@ -7,7 +7,7 @@ Midgard demo under `demo/`.
 
 The node template lives at:
 
-- `demo/midgard-node/.env.example`
+- [`sundial-node/.env.example`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/.env.example)
 
 The local runtime file is:
 
@@ -20,7 +20,7 @@ cd demo/midgard-node
 cp .env.example .env
 ```
 
-`dotenv.config()` is called by `demo/midgard-node/src/index.ts`, so local
+`dotenv.config()` is called by [`sundial-node/src/index.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/index.ts), so local
 non-Docker runs read `.env` from the `midgard-node` working directory.
 
 Docker Compose also uses:
@@ -35,7 +35,7 @@ PostgreSQL settings.
 
 ## Runtime Contract
 
-Configuration is parsed by `demo/midgard-node/src/services/config.ts` using
+Configuration is parsed by [`sundial-node/src/services/config.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/services/config.ts) using
 Effect Config.
 
 Important behavior:
@@ -54,7 +54,7 @@ Important behavior:
 
 ## Node Env
 
-These variables are defined by `demo/midgard-node/.env.example`.
+These variables are defined by [`sundial-node/.env.example`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/.env.example).
 
 | Variable                                       | Required by config | Default in code                 | Purpose                                                                                           |
 | ---------------------------------------------- | ------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -299,3 +299,5 @@ The node package depends on the packed SDK tarball:
 
 - [Architecture](./architecture.md)
 - [API](./api.md)
+- [Smart Contract Interactions](./smart-contracts.md)
+- [Security Best Practices](./security.md)
