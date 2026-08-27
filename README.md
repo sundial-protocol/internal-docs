@@ -25,4 +25,9 @@ on-chain Midgard validators), [security.md](./security.md) (integrator-facing
 security best practices), and [environment.md](./environment.md)
 (configuration reference), alongside the broader [architecture.md](./architecture.md).
 
+**End-User Docs**: [testnet-user-guide.md](./testnet-user-guide.md) is for
+people using the deployed testnet (wallet setup, the sBTC faucet, the demo
+dashboard) rather than integrating with or operating the node — no
+programming background assumed.
+
 Catalyst Reviewers, please see the [Milestone 4 Hyperlink Guide](./reports/milestone-guides/M4%20Hyperlink%20Guide.pdf) for a handy overview of where to find everything you're looking for.

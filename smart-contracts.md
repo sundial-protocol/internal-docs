@@ -122,7 +122,7 @@ Two things worth calling out beyond the table:
 ## Transaction Lifecycle
 
 This is the path a transaction takes from `POST /submit` to being folded into
-confirmed L1 state. See [api.md](./api.md#2-submit-an-l2-transaction) for the
+confirmed L1 state. See [api.md](./api.md#3-submit-an-l2-transaction) for the
 HTTP contract itself.
 
 1. **Ingress** — `POST /submit`'s raw hex CBOR is pushed onto a Redis Stream
@@ -195,6 +195,14 @@ This is the same library [`sundial-node`](https://github.com/sundial-protocol/su
 the node's HTTP API can trigger, the SDK can build directly — with the same
 [always-succeeds caveat](#the-demo-runs-against-placeholder-validators)
 applying regardless of which path you use.
+
+Note that a plain payment (spending L2 UTxOs to pay another address) is
+*not* one of the SDK's named protocol operations above — it's an ordinary
+Cardano transaction, not a deposit/withdrawal/tx-order. Don't go looking for
+a `transfer.ts` under `user-events/`; there isn't one. See
+[api.md § 2](./api.md#2-build-a-transaction-to-submit) for the pattern
+(a minimal Lucid `Provider` wired to the node's `GET /utxos` / `POST /submit`)
+and a working example.
 
 ## Related Docs
 

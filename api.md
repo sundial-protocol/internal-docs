@@ -128,7 +128,103 @@ slow dependency can't hang the whole check: a Postgres `SELECT 1`, a Redis
 connection error as "node is down" — that pattern still works but predates
 these health endpoints and is more indirect than using them directly.)
 
-### 2. Submit an L2 transaction
+### 2. Build a transaction to submit
+
+`POST /submit` only accepts an already-built, already-signed transaction —
+the node has no "pay Alice 5 sBTC" endpoint. You have to build that
+transaction yourself before you get to step 3. There is no packaged helper
+for this anywhere in the repo today (`midgard-sdk`'s exported modules only
+cover the named protocol operations — deposit, withdrawal, tx-order — not a
+plain payment; see [smart-contracts.md](./smart-contracts.md)), so this
+section documents the pattern directly, backed by a real, typechecked
+example: [`midgard-sdk/examples/send-payment.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-sdk/examples/send-payment.ts).
+
+**Why you can't just point a normal Cardano tx-building setup at Sundial.**
+Building a transaction with [Lucid Evolution](https://anastasia-labs.github.io/lucid-evolution)
+(the library `sundial-node` itself uses) requires a `Provider` — something
+that can look up spendable UTxOs, protocol parameters, and submit the
+finished transaction. The standard providers (Blockfrost, Kupmios, Maestro,
+or a wallet's own built-in backend) all talk to Cardano L1. None of them
+know Midgard's L2 ledger exists. So the UTxOs they'd return for your address
+won't include your L2 balance, and submitting through them would send the
+transaction to the wrong chain entirely.
+
+The fix is a small custom `Provider` that sources UTxOs from
+`GET /utxos` and submits via `POST /submit` instead:
+
+```ts
+class MidgardNodeProvider implements Provider {
+  constructor(private readonly baseUrl: string) {}
+
+  async getUtxos(address: string): Promise<UTxO[]> {
+    const res = await fetch(`${this.baseUrl}/utxos?address=${encodeURIComponent(address)}`);
+    const { utxos } = await res.json() as { utxos: { outref: string; value: string }[] };
+    return utxos.map(({ outref, value }) =>
+      coreToUtxo(CML.TransactionUnspentOutput.new(
+        CML.TransactionInput.from_cbor_hex(outref),
+        CML.TransactionOutput.from_cbor_hex(value),
+      )),
+    );
+  }
+
+  async submitTx(tx: string): Promise<TxHash> {
+    await fetch(`${this.baseUrl}/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: tx,
+    });
+    // the node's success response only carries a Redis stream entry id, not
+    // a tx hash — see step 3 below for how to get the hash yourself.
+    return CML.hash_transaction(CML.Transaction.from_cbor_hex(tx).body()).to_hex();
+  }
+  // ...getProtocolParameters and the rest of the Provider interface —
+  // see the full example for a working implementation.
+}
+```
+
+Full protocol parameters are required to build a valid transaction, but two
+of them matter more than the rest: `minFeeA: 44` and `minFeeB: 155381`.
+These are the exact values `sundial-node`'s mempool validation checks a
+submitted transaction's fee against
+([`database/mempool.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/database/mempool.ts)'s `defaultPhaseAConfig`) — build with anything
+else and the node may reject the transaction as underpaying its fee.
+
+**Signing: raw private key vs. a CIP-30 wallet.** Once you have a `Provider`,
+Lucid Evolution supports either signing path, and both go through the same
+`Provider` above — only the `selectWallet` call changes:
+
+- **Raw private key** (backend/script use, e.g. test tooling):
+  `lucid.selectWallet.fromPrivateKey(privateKey)`.
+- **Browser wallet extension** (end-user dApp — the same Eternl/Lace/etc.
+  wallets from [testnet-user-guide.md](./testnet-user-guide.md#what-you-need)):
+  `lucid.selectWallet.fromAPI(cip30Api)`, where `cip30Api` is what
+  `window.cardano.<wallet>.enable()` resolves to.
+
+**A wallet extension's own `getUtxos()`/`submitTx()` will not work here.**
+CIP-30 only standardizes signing (`signTx`) and read access to *the wallet's
+own* configured Cardano backend — that backend is L1 (or L1-testnet), not
+Midgard's L2. Use the wallet purely for `signTx`; UTxO lookup and submission
+must go through the `Provider` above, talking to `sundial-node` directly.
+
+Putting it together (private-key variant; see the linked example for the
+CIP-30 variant and the full `Provider`):
+
+```ts
+const lucid = await Lucid(new MidgardNodeProvider(NODE_URL), "Preprod");
+lucid.selectWallet.fromPrivateKey(senderPrivateKey);
+
+const tx = await lucid.newTx()
+  .pay.ToAddress(recipientAddress, { lovelace: amountLovelace })
+  .complete();
+const signed = await tx.sign.withPrivateKey(senderPrivateKey).complete();
+const txHash = await signed.submit(); // routes through MidgardNodeProvider.submitTx
+```
+
+`signed.submit()` is Lucid's own submit call — it invokes the `Provider`'s
+`submitTx`, which is where the actual `POST /submit` from step 3 below
+happens.
+
+### 3. Submit an L2 transaction
 
 ```http
 POST /submit
@@ -198,7 +294,7 @@ the interceptor and falls through to the Effect router instead, which reads
 its body — not the query string — the same as the live path. Either way, put
 the CBOR in the body of a plain `POST /submit`.
 
-### 3. Look up a transaction
+### 4. Look up a transaction
 
 ```http
 GET /tx?tx_hash=<64-hex-transaction-hash>
@@ -226,7 +322,7 @@ Invalid request (`400`):
 { "error": "Invalid transaction hash: <tx_hash>" }
 ```
 
-### 4. Query spendable L2 UTxOs for an address
+### 5. Query spendable L2 UTxOs for an address
 
 ```http
 GET /utxos?address=<cardano-bech32-address>
@@ -254,7 +350,7 @@ Success response:
 }
 ```
 
-### 5. Query address transaction history
+### 6. Query address transaction history
 
 ```http
 GET /txs?address=<cardano-bech32-address>&limit=<n>&offset=<n>
@@ -287,7 +383,7 @@ Success response:
 more beyond this page) — page forward by re-requesting with
 `offset + limit`.
 
-### 6. Query transactions included in a block
+### 7. Query transactions included in a block
 
 ```http
 GET /block?header_hash=<56-hex-header-hash>
@@ -309,7 +405,7 @@ Invalid request (`400`):
 { "error": "Invalid block hash: <header_hash>" }
 ```
 
-### 7. Claim testnet ADA from the faucet
+### 8. Claim testnet ADA from the faucet
 
 ```http
 POST /faucet/claims

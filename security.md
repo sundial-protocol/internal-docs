@@ -68,7 +68,7 @@ them, not just guess at them):
   submit time, transaction-shape validity is not).
 - `/txs` pagination: `limit`/`offset` must be non-negative integers;
   `limit` is clamped to 500 server-side regardless of what you request — see
-  [api.md § 5](./api.md#5-query-address-transaction-history).
+  [api.md § 6](./api.md#6-query-address-transaction-history).
 
 See the handlers in [`sundial-node/src/commands/listen.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/commands/listen.ts) directly if
 these rules ever seem to have drifted from this document.
@@ -79,7 +79,7 @@ these rules ever seem to have drifted from this document.
   went wrong"}`. Don't parse this string for anything meaningful — check the
   status code and, where present, a more specific `error` message or `code`
   field (the faucet endpoint's error responses carry a stable `code`; see
-  [api.md § 7](./api.md#7-claim-testnet-ada-from-the-faucet)).
+  [api.md § 8](./api.md#8-claim-testnet-ada-from-the-faucet)).
 - Codec/deserialization errors carry a path to the specific field that
   failed to decode, rather than a bare "decode failed" — useful for
   pinpointing a malformed value in a large transaction or datum without
