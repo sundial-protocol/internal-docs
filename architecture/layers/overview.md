@@ -2,28 +2,30 @@
 
 ![User Flows & Services](services.png)
 
-The architecture of Sundial is divided into 7 layers, the first 2 of which are the Layer 1 (Cardano) and Layer 2 (Sundial) protocols. The remaining layers are built to enable ease of use and integration with the protocol, as well as to provide a user-friendly experience.
+The architecture of Sundial is divided into 7 layers, the first 2 of which are the Layer 1 (a UTXO-based settlement L1) and Layer 2 (Sundial) protocols. The remaining layers are built to enable ease of use and integration with the protocol, as well as to provide a user-friendly experience.
 
 This document provides an overview of the architecture, including the key services and their interactions. The architecture is designed to be modular and extensible, allowing for future enhancements and integrations.
 
-## L1: Cardano
+## L1: Settlement L1 (UTXO-based)
 
-Sundial settles to the Cardano blockchain, which provides the foundational layer for Sundial. Cardano's track record for security and stability is rivaled only by Bitcoin, and its proof-of-stake consensus mechanism ensures that it can scale to meet the needs of a growing user base without compromising on security or decentralization. The fully deterministic nature of Cardano's smart contracts also makes it an ideal choice for building a high-confidence optimistic Layer 2 protocol.
+Sundial settles to a UTXO-based settlement L1, which provides the foundational layer for Sundial. The chosen L1 offers strong security and stability guarantees, and its fully deterministic smart-contract model makes it well-suited to a high-confidence optimistic Layer 2.[^l1]
 
-Cardano hosts a suite of smart contracts that Sundial uses to manage its operations. These include a state queue, settlement queue, scheduler, deposit contract, an operator registry, and a suite of contracts for proving fraud on the L2 in a fully deterministic manner.
+[^l1]: The L1 in use today is Cardano, whose proof-of-stake Ouroboros consensus scales to a growing user base without compromising security or decentralization.
 
-Cardano is also used as a Data Availability (DA) layer, meaning it stores the data needed for Sundial to operate. As an optimistic rollup, Sundial only publishes block headers into the state queue. The DA layer ensures that block data is secure and can be accessed by anyone who needs it for fraud proving or other onchain purposes.
+The settlement L1 hosts a suite of smart contracts that Sundial uses to manage its operations. These include a state queue, settlement queue, scheduler, deposit contract, an operator registry, and a suite of contracts for proving fraud on the L2 in a fully deterministic manner.
+
+The settlement L1 is also used as a Data Availability (DA) layer, meaning it stores the data needed for Sundial to operate. As an optimistic rollup, Sundial only publishes block headers into the state queue. The DA layer ensures that block data is secure and can be accessed by anyone who needs it for fraud proving or other onchain purposes.
 
 ## L2: Sundial
 
-Layer 2 is the Sundial protocol itself, which is built on top of the Cardano blockchain. It provides the core functionality for the protocol, including the state queue, settlement queue, and scheduler.
+Layer 2 is the Sundial protocol itself, which is built on top of the settlement L1. It provides the core functionality for the protocol, including the state queue, settlement queue, and scheduler.
 
-Sundial is built with the Midgard L2 Framework, which is a set of tools and libraries that make it easier to build Layer 2 protocols on Cardano. It provides a set of abstractions for managing state, transactions, and other core functionality. Included in this layer are the services mentioned above, as well as the following:
+Sundial is built with the Midgard L2 Framework, which is a set of tools and libraries that make it easier to build Layer 2 protocols on UTXO-based L1s. It provides a set of abstractions for managing state, transactions, and other core functionality. Included in this layer are the services mentioned above, as well as the following:
 
 - **Data Archive**: A decentralized, data-duplicated service that stores historical data for the protocol, allowing users to access past transactions and states.
-- **Data Availability (DA) Layer**: This layer ensures that the data needed for Sundial to operate is securely stored and accessible. It is implemented on Cardano, leveraging its Leios blob storage for easy accessibility onchain without undue cost or bloat to the L1.
+- **Data Availability (DA) Layer**: This layer ensures that the data needed for Sundial to operate is securely stored and accessible. It is implemented on the settlement L1, leveraging that L1's blob/DA storage (Leios on the L1 in use today) for accessible on-chain data without undue cost or bloat.
 
-The Layer 2 also makes use of the Plutus VM, allowing for isomorphism between L1 & L2 smart contracts. This allows dapps to easily interact with both layers, and for developers to build complex applications that leverage the strengths of both Cardano and Sundial. The transactional determinism of the Plutus VM also allows for greater security and trustlessness, as developers can easily verify the correctness of their applications with formal verification methods.
+The Layer 2 uses the same script VM as the settlement L1 (the Plutus VM on the L1 in use today), allowing isomorphism between L1 and L2 smart contracts. This allows dapps to easily interact with both layers, and for developers to build complex applications that leverage the strengths of both the settlement L1 and Sundial. The transactional determinism of the Plutus VM also allows for greater security and trustlessness, as developers can easily verify the correctness of their applications with formal verification methods.
 
 ## SL3: Data Layer
 
@@ -36,15 +38,15 @@ The Data Layer has 2 types of services:
 
 The Construction Layer provides a set of tools and libraries for building applications on top of the Sundial protocol. It includes the following services:
 
-- **Offchain Specifications**: A set of specifications that define how applications can construct transactions and interact with the protocol. These are backwards compatible with Cardano's CIP-30 wallet standard, allowing for easy integration with existing wallets and applications.
-- **Wallet Specifications**: A set of specifications that define how wallets can interact with the protocol, including transaction construction and signing. This includes specifications for interacting with both the Bitcoin and Cardano networks, as well as the Sundial L2.
+- **Offchain Specifications**: A set of specifications that define how applications can construct transactions and interact with the protocol. These are backwards compatible with the CIP-30 UTXO-wallet standard, allowing for easy integration with existing wallets and applications. <!-- TODO: track a chain-neutral wallet-injection interface as UTXO wallets on other L1s appear -->
+- **Wallet Specifications**: A set of specifications that define how wallets can interact with the protocol, including transaction construction and signing. This includes specifications for interacting with Bitcoin, the settlement L1 (and other connected UTXO-based L1s), as well as the Sundial L2.
 - **Shared Liquidity Pools**: A set of liquidity pools made available to dapps that pass our verification process, as well as the native dapps integrated into the yield platform. The initial design includes pools for stablecoins, wrapped Bitcoin, and native Ada.
 
 ## SL5: Function Layer
 
 The Function Layer includes a suite of commonly desired use cases that are made available to users as an inherent part of the protocol. They include:
 
-- **Bridges** between Bitcoin and Cardano: These bridges allow users to move assets between the two networks, enabling cross-chain transactions and interactions. We're working alongside 3 teams (Charms, IOG, Fluidtokens) that are developing these zero-trust bridges, and have concrete plans for integration with them via our bridge operator tooling.
+- **Bridges** between Bitcoin and the settlement L1 (extensible to other connected UTXO-based L1s): These bridges allow users to move assets between the two networks, enabling cross-chain transactions and interactions. We're working alongside 3 teams (Charms, IOG, Fluidtokens) that are developing these zero-trust bridges, and have concrete plans for integration with them via our bridge operator tooling.
 - **Yield Instruments**: These allow users to earn yield on their assets, providing a way to generate passive income. The yield instruments are designed to be secure and easy to use, allowing users to earn yield without having to manage complex strategies. They allow users to choose where their yield is generated by selecting from a range of options, to tailor their risk and return profiles.
 - **Watchers**: These are services that monitor the protocol for specific events or conditions, such as fraud detection or accelerated deposits/withdrawals. They operate as independent actors, and incentivized to provide accurate and timely information to users.
 
@@ -52,7 +54,7 @@ The Function Layer includes a suite of commonly desired use cases that are made 
 
 The Routing Layer provides a set of smart services that interprets and prepares user inputs for interaction in the Function Layer. This includes:
 
-- **Bridging Services**: These services facilitate user interactions with the bridges, allowing them to move assets between Bitcoin and Cardano networks seamlessly. They also monitor the status of the bridges and provide users with real-time information about their transactions.
+- **Bridging Services**: These services facilitate user interactions with the bridges, allowing them to move assets between Bitcoin and the settlement-L1 networks seamlessly. They also monitor the status of the bridges and provide users with real-time information about their transactions.
 - **Staking Services**: These allow users to stake their assets in the protocol, earning rewards for participating in the network. They are designed to be easy to use and secure, allowing users to stake their assets without having to manage complex strategies.
 - **Facilitator Registry**: This provides a way for facilitators to register their services, allowing users to discover and interact with them easily. It includes information about each facilitator's fees, supported networks, and other relevant details.
 

@@ -90,6 +90,8 @@ This lifecycle must ensure **atomicity** and **reversibility** of asset transfer
 
 #### Further Reading
 
+Cardinal is one bridge targeting the settlement L1 in use today; the external references below use that L1's proper name.
+
 - ["Cardinal Whitepaper"](https://8848114.fs1.hubspotusercontent-na1.net/hubfs/8848114/Bitcoin-Cardano%20BitVMX%20Ordinals%20Wrapping.pdf)
 - ["Cardinal Spec"](https://github.com/input-output-hk/cardinal-spec?utm_source=chatgpt.com)
 - ["Introducing Cardinal"](https://www.fairgate.io/post/15-introducing-cardinal-how-bitvmx-bridges-bitcoin-ordinals-to-cardano-unlocking-cross-chain-defi)

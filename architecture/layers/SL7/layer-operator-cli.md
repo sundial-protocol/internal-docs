@@ -106,7 +106,7 @@ sundial-cli address key-gen \
 
 ### Build an address
 
-This address will not have staking rights. It cannot delegate or receive rewards because it does not have a stake part associated with it, only a payment part (see [CIP-19](https://cips.cardano.org/cips/cip19/)).
+This address will not have staking rights. It cannot delegate or receive rewards because it does not have a stake part associated with it, only a payment part (see the settlement L1's address format, [CIP-19](https://cips.cardano.org/cips/cip19/) on the L1 currently used). <!-- TODO: this CLI page is L1-address-specific; flag for a deeper de-Cardano pass -->
 
 ```shell
 sundial-cli address build \

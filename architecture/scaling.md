@@ -47,7 +47,7 @@ $$
 
 Where:
 
-- $$N_{tx}$$ = Number of transactions received through the network within the frequency of a Cardano block (currently ~20s).
+- $$N_{tx}$$ = Number of transactions received through the network within the frequency of a settlement-L1 block (currently ~20s on the L1 in use today).
 - $$\lambda_{hash}$$ = Time taken for transaction core components to be added to the Merkle hashes in the block header by the node.
 - $$\lambda_{proc}$$ = Time taken to process a transaction and place it in a block by the node.
 
@@ -120,13 +120,13 @@ The challenge window is a configurable parameter of the protocol, and can be adj
 
 ## L1 Scaling Path and Higher Throughput
 
-The current Sundial L2 anchors block commitments directly to Cardano L1. The rate at which the L2 can finalize state is therefore bounded by L1 transaction throughput and block frequency. Scaling beyond approximately 5,000 TPS on the current architecture would require improvements to L1 data availability and state-channel throughput.
+The current Sundial L2 anchors block commitments directly to the settlement L1. The rate at which the L2 can finalize state is therefore bounded by L1 transaction throughput and block frequency. Scaling beyond approximately 5,000 TPS on the current architecture would require improvements to L1 data availability and state-channel throughput.
 
-One mechanism that would enable this is **Hydrozoa/Gummiworm**, a Cardano scaling concept that extends Hydra-style state channels into a more flexible L1 settlement layer. Rather than pushing every transaction directly through Cardano L1, users transact inside fast off-chain execution environments ("heads"). A broader coil validator group verifies and co-signs the effects that actually move funds on L1. This separates **execution speed** from **custody safety**: small execution groups can process transactions quickly without gaining unilateral control over user funds.
+One L1-specific example: on the settlement L1 currently used, **Hydrozoa/Gummiworm** extends Hydra-style state channels into a more flexible L1 settlement layer. Equivalent state-channel or recursive-settlement paths would be evaluated per connected L1. Rather than pushing every transaction directly through the settlement L1, users transact inside fast off-chain execution environments ("heads"). A broader coil validator group verifies and co-signs the effects that actually move funds on L1. This separates **execution speed** from **custody safety**: small execution groups can process transactions quickly without gaining unilateral control over user funds.
 
-For Cardano L1, this reduces the number of transactions that require immediate on-chain settlement. Deposits, withdrawals, trades, and balance updates can be batched, netted, or finalized through compact L1 effects rather than individual L1 transactions. L1 becomes the security and settlement anchor rather than the throughput bottleneck for every action.
+For the settlement L1, this reduces the number of transactions that require immediate on-chain settlement. Deposits, withdrawals, trades, and balance updates can be batched, netted, or finalized through compact L1 effects rather than individual L1 transactions. L1 becomes the security and settlement anchor rather than the throughput bottleneck for every action.
 
-For Sundial, Hydrozoa/Gummiworm-style mechanisms could provide a significantly higher-throughput settlement substrate. Sundial could process many more user actions off-chain, then rely on these mechanisms for safe L1 anchoring, custody protection, and emergency exits. The result would be faster UX, lower fees, and throughput potentially in the 20,000+ TPS range, while preserving Cardano L1 as the final source of security.
+For Sundial, Hydrozoa/Gummiworm-style mechanisms could provide a significantly higher-throughput settlement substrate. Sundial could process many more user actions off-chain, then rely on these mechanisms for safe L1 anchoring, custody protection, and emergency exits. The result would be faster UX, lower fees, and throughput potentially in the 20,000+ TPS range, while preserving the settlement L1 as the final source of security.
 
 Sundial's current architecture is designed to be compatible with such an evolution. L1 scaling work of this kind represents a future protocol milestone, not a current implementation requirement.
 
@@ -134,7 +134,7 @@ Sundial's current architecture is designed to be compatible with such an evoluti
 
 ## Facilitator Watchers
 
-The Sundial protocol is designed to facilitate cross-chain transactions and interactions, particularly between the Cardano and Bitcoin networks. This is achieved through the use of Facilitator Watchers, who play an auxiliary role in ensuring that transactions are executed smoothly across chains.
+The Sundial protocol is designed to facilitate cross-chain transactions and interactions, particularly between Bitcoin and any connected UTXO-based L1. This is achieved through the use of Facilitator Watchers, who play an auxiliary role in ensuring that transactions are executed smoothly across chains.
 
 Facilitators watch for transactions that need to be executed across chains and act as voluntary intermediaries, helping to coordinate the transaction more swiftly in return for a fee.
 

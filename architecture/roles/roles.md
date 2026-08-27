@@ -18,7 +18,7 @@ Layer Operators (or Block Producers) are the foundation of the Sundial protocol.
 
 Information about Bridge Operation is still TBD as we work with different bridging solutions. Most likely this will include several sub-roles for operators who choose to operator only 1 bridge.
 
-Bridge Operation requires watching both the Cardano L1 and the Bitcoin L1, as well as (perhaps) interacting with other bridge operators.
+Bridge Operation requires watching both the settlement L1 (and any other connected UTXO-based L1s) and the Bitcoin L1, as well as (perhaps) interacting with other bridge operators.
 
 ## Watchers
 

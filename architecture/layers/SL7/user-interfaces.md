@@ -39,8 +39,8 @@ The network status dashboard provides users with real-time information about the
 
 | View                           | Description                                                                                                                                                                             |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **L1 Dashboard**               | Provides insights into the performance and health of the Cardano & Bitcoin Layer 1 blockchains. Includes block times, transaction throughput, and network latency.                      |
-| **L2 Dashboard**               | Offers insights into the performance and health of Layer 2 solutions built on Cardano & Bitcoin. Includes transaction speeds, costs, user adoption, and health of layer-node operators. |
+| **L1 Dashboard**               | Provides insights into the performance and health of the connected Layer 1 blockchains (Bitcoin and the settlement L1). Includes block times, transaction throughput, and network latency.                      |
+| **L2 Dashboard**               | Offers insights into the performance and health of Layer 2 solutions built on the settlement L1 & Bitcoin. Includes transaction speeds, costs, user adoption, and health of layer-node operators. |
 | **Security Services**          | Shows performance and health of public data tooling, specifically monitoring known Canaries.                                                                                            |
 | **Liquidity Dashboard**        | Displays liquidity available across Sundial, including pool depths, trading volumes, and slippage rates.                                                                                |
 | **Tool Vulnerabilities Board** | Provides insights into the security posture of tools built on Sundial, such as wallets and transaction builders.                                                                        |

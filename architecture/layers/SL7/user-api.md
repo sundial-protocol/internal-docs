@@ -4,29 +4,29 @@ A simple REST API for interacting with the Sundial protocol. This API provides e
 
 It also includes a few basic informational endpoints to retrieve data used for actions, such as operator & account details, for data consistency purposes.
 
-This will be hosted as a public service, but can also be self-hosted by users who want to run their own instance of the API. All functionality will be accesible elsewhere in decentralized ways (via operator APIs, the Cardano L1, or Sundial indexers) so this is primarily a convenience.
+This will be hosted as a public service, but can also be self-hosted by users who want to run their own instance of the API. All functionality will be accesible elsewhere in decentralized ways (via operator APIs, the settlement L1, or Sundial indexers) so this is primarily a convenience.
 
 ## Actions
 
 ### Generic L2 Transaction Endpoints
 
-These closely follow the Midgard transaction model. As such most of these can be handled via the Cardano L1 or Layer Operator APIs.
+These closely follow the Midgard transaction model. As such most of these can be handled via the settlement L1 or Layer Operator APIs.
 
 - `POST /request`: Submit a new transaction request to the Sundial network.
 - `POST /order`: Place a tx order.
-- `POST /withdraw`: Initiate a withdrawal from the Sundial network to the Cardano L1.
-- `POST /deposit`: Initiate a deposit from the Cardano L1 to the Sundial network.
+- `POST /withdraw`: Initiate a withdrawal from the Sundial network to the settlement L1.
+- `POST /deposit`: Initiate a deposit from the settlement L1 to the Sundial network.
 - `POST /escape-hatch`: Initiate an escape hatch procedure to withdraw funds in case of an emergency. (Should never be used in normal operation.)
 - `POST /:operatorId/request`: Submit a transaction request directly to a specific layer operator.
 
 ### Bridge Endpoints
 
-These endpoints facilitate cross-chain transfers between Bitcoin and Cardano. They interact with the Bridge Operators to initiate and monitor bridge transfers.
+These endpoints facilitate cross-chain transfers between Bitcoin and the settlement L1 (or other connected UTXO-based L1s). They interact with the Bridge Operators to initiate and monitor bridge transfers.
 
-- `POST /bridges/transferIn`: Initiate a bridge transfer between Bitcoin and Cardano.
-- `POST /bridges/transferOut`: Initiate a bridge transfer from Cardano to Bitcoin.
-- `POST /bridges/:bridgeId/transferIn`: Initiate a bridge transfer between Bitcoin and Cardano using a specific bridge.
-- `POST /bridges/:bridgeId/transferOut`: Initiate a bridge transfer from Cardano to Bitcoin using a specific bridge.
+- `POST /bridges/transferIn`: Initiate a bridge transfer between Bitcoin and the settlement L1. <!-- TODO: consider adding a chain parameter once more L1s are connected -->
+- `POST /bridges/transferOut`: Initiate a bridge transfer from the settlement L1 to Bitcoin.
+- `POST /bridges/:bridgeId/transferIn`: Initiate a bridge transfer between Bitcoin and the settlement L1 using a specific bridge.
+- `POST /bridges/:bridgeId/transferOut`: Initiate a bridge transfer from the settlement L1 to Bitcoin using a specific bridge.
 
 ### Yield Platform Endpoints
 

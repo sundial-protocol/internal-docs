@@ -39,7 +39,7 @@ By implementing this disaster recovery plan, Sundial aims to ensure the resilien
 
 In the worst-case scenario where the L2 network is irreparably compromised, Sundial has a contingency plan to ensure that all user funds can be safely reclaimed on the associated L1s. This plan includes:
 
-- **Cardano Recovery (Escape Hatch)** When a sufficient amount of time has passed without a block produced, users can initiate an escape hatch procedure to withdraw all funds from the L2 back to the Cardano L1.
+- **Settlement-L1 Recovery (Escape Hatch)** When a sufficient amount of time has passed without a block produced, users can initiate an escape hatch procedure to withdraw all funds from the L2 back to the settlement L1.
 - **Bitcoin Recovery (HTLC Expiry | Committee Member Assistance)** In the event of a catastrophic failure of the L2 network, users can reclaim their bridged Bitcoin assets directly on the Bitcoin L1 using the bridge's built-in recovery mechanisms. These involve 2 potential methods:
   - **HTLC Expiry** allow the HTLC used to lock Bitcoin assets during the bridging process to expire, enabling the user to reclaim their assets after the predetermined period.
   - **Committee Member Assistance** A user needs only one of the committee members to assist them in reclaiming their Bitcoin assets ahead of the HTLC expiry. This is done by providing a signed transaction that returns the assets to the user's specified address.

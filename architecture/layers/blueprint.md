@@ -13,7 +13,7 @@ sequenceDiagram
     participant L1 as Any UTxO L1
     participant L2 as Sundial L2
     participant Stake as Staking service
-    participant CL1 as Cardano L1
+    participant CL1 as Settlement L1
     participant Yield as Yield Instruments
 
     Note over User, L1: Any UTxO L1
@@ -57,7 +57,7 @@ sequenceDiagram
     participant BTCL1 as Bitcoin L1
     participant BridgeOp as Bridge Operator
     participant L2 as Sundial L2
-    participant L1 as Cardano L1
+    participant L1 as Settlement L1
 
     Note over User, BridgeOp: Bitcoin L1
     Note over BridgeOp, L1: Sundial L2
@@ -89,7 +89,7 @@ sequenceDiagram
     participant UI as Sundial Web UI
     participant BridgeService as Bridging Service
     participant L2 as Sundial L2
-    participant L1 as Cardano L1
+    participant L1 as Settlement L1
     participant BridgeOp as Bridge Operator
     participant BTCL1 as Bitcoin L1
 
@@ -112,9 +112,9 @@ sequenceDiagram
 
 ## Deposit Flow
 
-As the settlement layer, Cardano has some advantages for liquidity transfer. Rather than bridging assets, we term these transfers as deposits and withdrawals.
+As the settlement layer, a UTXO-based L1 has some advantages for liquidity transfer (native multi-asset, deterministic scripts, direct UTXO ownership) — rather than bridging assets, we term these transfers deposits and withdrawals.
 
-### Deposit Assets (Cardano to Sundial)
+### Deposit Assets (Settlement L1 to Sundial)
 
 Deposits can be accelerated by facilitators who provide liquidity on the L2 in exchange for a fee.
 
@@ -127,7 +127,7 @@ sequenceDiagram
     participant Facilitator
     participant L2 as User on L2
 
-    Note over User, Facilitator: Cardano L1
+    Note over User, Facilitator: Settlement L1
     Note over BP, L2: Sundial L2
     User->>UI: Initiate Deposit Request
     UI->>L1: Create Deposit Tx
@@ -142,7 +142,7 @@ else Accelerated
 end
 ```
 
-### Withdraw Assets (Sundial to Cardano)
+### Withdraw Assets (Sundial to Settlement L1)
 
 Likewise withdrawals can be accelerated by facilitators who provide liquidity on the L1 in exchange for a fee.
 
@@ -156,7 +156,7 @@ sequenceDiagram
     participant User as User on L1
 
     Note over L2, Facilitator: Sundial L2
-    Note over BP, User: Cardano L1
+    Note over BP, User: Settlement L1
     L2->>UI: Initiate Withdrawal Request
     UI->>BP: Create Withdrawal Tx
     BP->>L1: Tx Inclusion

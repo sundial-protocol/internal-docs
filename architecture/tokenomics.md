@@ -2,7 +2,7 @@
 
 ## **1\. Core Principle**
 
-Sundial is the first optimistic rollup on Cardano built to function as Bitcoin’s utility and yield layer. Unlike most Layer-2 networks, Sundial introduces no new token \- Bitcoin itself is the native asset. Both in its native and wrapped forms, BTC underpins every aspect of the protocol: transaction fees, operator bonds, rewards, and governance.
+Sundial is a UTXO-based optimistic rollup built to function as Bitcoin’s utility and yield layer. Unlike most Layer-2 networks, Sundial introduces no new token \- Bitcoin itself is the native asset. Both in its native and wrapped forms, BTC underpins every aspect of the protocol: transaction fees, operator bonds, rewards, and governance.
 
 By anchoring directly to Bitcoin’s liquidity and monetary policy, Sundial achieves economic alignment with the world’s strongest digital asset while avoiding the dilution and distortions that come with inflationary L2 tokens.
 
