@@ -81,7 +81,7 @@ Aggregates:
 - `npm run tests:all`
 - `npm run test:all`
 
-Current demo entrypoints:
+Current testnet entrypoints:
 
 - `cd demo/midgard-node && pnpm test`
 - `cd demo && npm run test:legacy:all`
@@ -243,7 +243,7 @@ Broad validation commands:
 - `npm run security:check:all`
 - `npm run test:all`
 
-Current demo validation commands:
+Current testnet validation commands:
 
 - `cd demo/midgard-node && pnpm format-check`
 - `cd demo/midgard-node && pnpm type-check`

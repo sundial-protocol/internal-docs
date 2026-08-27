@@ -1,7 +1,7 @@
 # Sundial Testnet — User Guide
 
 This is an **end-user** guide: how to get a wallet, get testnet sBTC from the
-faucet, and (optionally) explore the Sundial demo dashboard. It does not
+faucet, and (optionally) explore the Sundial testnet dashboard. It does not
 assume any programming background.
 
 If you're a developer integrating with the node's HTTP API, see
@@ -46,8 +46,8 @@ and Sundial's L2 rely on):
 You only need one. Install it as a browser extension, create or restore a
 wallet, and keep going.
 
-> A separate Bitcoin wallet (e.g. for the demo dashboard's "Connect Wallet"
-> button) is optional and covered in [Explore the demo dashboard](#optional-explore-the-demo-dashboard)
+> A separate Bitcoin wallet (e.g. for the testnet dashboard's "Connect Wallet"
+> button) is optional and covered in [Explore the testnet dashboard](#optional-explore-the-demo-dashboard)
 > below — you don't need one just to claim faucet funds.
 
 ## Step 1 — Switch your wallet to testnet and copy your address
@@ -133,7 +133,7 @@ claim submission specifically requires a server-side credential the faucet
 page holds on your behalf, so claims must go through the web page rather than
 a direct API call.
 
-## Explore the demo dashboard
+## Explore the testnet dashboard
 
 Sundial's [dashboard](https://www.sundialprotocol.com/dashboard) shows what
 the full Bitcoin-yield product looks like: connecting a wallet, depositing,
@@ -151,7 +151,7 @@ faucet on its own without ever connecting a wallet to the site.
 
 ## Sending your testnet sBTC to someone else
 
-There isn't a "Send" button for this yet — the demo dashboard covers
+There isn't a "Send" button for this yet — the testnet dashboard covers
 depositing and tracking yield positions on **Bitcoin's testnet3 network**,
 which is a separate flow from the testnet sBTC balance you just claimed on
 Sundial's L2.

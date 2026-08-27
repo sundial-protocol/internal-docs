@@ -96,7 +96,7 @@ The Sundial node exposes routes such as:
 - `GET /stateQueue`
 - `POST /submit`
 
-There is no dedicated health endpoint in this demo stack.
+There is no dedicated health endpoint in this stack.
 
 ## Persistence
 

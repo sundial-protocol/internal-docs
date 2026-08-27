@@ -4,7 +4,7 @@ Generated: 2026-08-17
 
 ## Purpose
 
-This document is a stage-independent dependency snapshot for the demo Midgard TypeScript packages. It is intended as a living SBOM artifact for release review: regenerate it whenever `demo/pnpm-lock.yaml` or any scoped `package.json` changes.
+This document is a stage-independent dependency snapshot for the testnet Sundial TypeScript packages. It is intended as a living SBOM artifact for release review: regenerate it whenever `demo/pnpm-lock.yaml` or any scoped `package.json` changes.
 
 The release-facing aggregate is `demo/midgard-node` (`sundial-node`). It declares `@al-ft/midgard-sdk` as a workspace dependency. `demo/midgard-ts` is also captured because the node imports it by relative source path and the node Docker build copies it into the build context, even though it is not declared as a package dependency of `sundial-node`.
 

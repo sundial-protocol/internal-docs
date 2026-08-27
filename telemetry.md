@@ -5,7 +5,7 @@ exposes scrapeable Prometheus metrics from the Sundial node process when it
 is started with monitoring enabled.
 
 This document focuses on application metrics, tracing, and telemetry semantics
-for the demo node. The demo also ships a local/container observability stack
+for the node. It also ships a local/container observability stack
 through Docker Compose: Prometheus, Grafana, Loki, Promtail, Tempo, and
 cAdvisor. The stack configuration lives under
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node).
@@ -93,7 +93,7 @@ the Sundial node code:
 
 ## Label Policy
 
-Telemetry in this demo should keep metrics low-cardinality and dashboard
+Telemetry should keep metrics low-cardinality and dashboard
 friendly.
 
 Allowed label shapes:
@@ -146,11 +146,11 @@ Do not duplicate trace identifiers or transaction identifiers in metric labels.
 - The metrics registry is process-local and created once per node process.
 - The Grafana dashboard currently expects the Docker-network scrape identity
   `instance="midgard-node:9464"`.
-- Tempo is configured with short local retention for demo purposes.
+- Tempo is configured with short local retention for testnet purposes.
 
 ## Out Of Scope
 
-The following are intentionally outside this demo telemetry scope:
+The following are intentionally outside this testnet telemetry scope:
 
 - production alert routing and paging policy
 - cloud networking or load balancer observability

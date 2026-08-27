@@ -6,7 +6,7 @@ It is based on the active code in [`sundial-node`](https://github.com/sundial-pr
 
 ## Context
 
-Sundial is a UTXO-based L2 demo implementation (originally targeting Cardano). Sundial uses a fork
+Sundial is a UTXO-based L2 implementation (originally targeting Cardano). Sundial uses a fork
 of this Sundial stack as its UTXO-based L2 substrate to support Bitcoin yield
 product, whichs remain a separate Sundial protocol layer.
 
@@ -19,7 +19,7 @@ Sundial has the following stack:
 - LevelDB-backed Merkle Patricia Trie stores keep the ledger and mempool MPTs.
 - The node exposes RPC-style HTTP endpoints, not a NestJS REST API.
 
-The node is still demo/MVP code. Some manager/client utilities reference routes
+The node is still code. Some manager/client utilities reference routes
 that are not registered by the node today; those mismatches are documented in
 [API](./api.md).
 
@@ -61,7 +61,7 @@ External dependencies are:
 ## Current Stack
 
 - TypeScript, ESM
-- Node.js 18+ for the demo workspace
+- Node.js 18+ for the workspace
 - pnpm 10 at `demo/` level, with older pnpm metadata in
   `demo/midgard-manager`
 - Effect, `@effect/platform`, `@effect/sql-pg`, `@effect/opentelemetry`

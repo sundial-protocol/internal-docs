@@ -14,10 +14,10 @@ or deploying the node; read this one if you're calling it.
 
 Before anything else: read
 [smart-contracts.md § The Demo Runs Against Placeholder Validators](./smart-contracts.md#the-demo-runs-against-placeholder-validators).
-In this demo deployment, on-chain script validation enforces none of
+In this deployment, on-chain script validation enforces none of
 Sundial's protocol rules — all correctness is enforced by
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)'s and [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk)'s own off-chain code. Don't
-point real value at demo contract addresses, and don't treat "the demo
+point real value at contract addresses, and don't treat "the
 accepted my transaction" as evidence that the real protocol would too.
 
 ## No Built-In Authentication Or Rate-Limiting

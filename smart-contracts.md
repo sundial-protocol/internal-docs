@@ -19,7 +19,7 @@ different levels of "real":
 | --- | --- | --- |
 | Formal spec | `technical-spec/Lean4Midgard/` (submodule, `github.com/input-output-hk/rnd-midgard`) | IOG's Lean4 formal verification of the protocol's state machines (StateQueue, Scheduler, OperatorDirectory, Settlement, Bridge/user-events, fraud-proof catalogue). A research artifact and correctness reference, not executable on-chain code. |
 | Real implementation | `onchain/aiken/` (validators + library code), `onchain/plutarch/` (parallel Haskell/Plutarch implementation) | The actual Aiken/Plutus V3 contracts with real validation logic: linked-list state queue, operator directory, scheduler, multi-step fraud proofs, settlement, user-events. |
-| What this demo runs | [`sundial-node/blueprints/always-succeeds`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/blueprints/always-succeeds) | A compiled Aiken project where every validator unconditionally returns `True`. |
+| What testnet runs | [`sundial-node/blueprints/always-succeeds`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/blueprints/always-succeeds) | A compiled Aiken project where every validator unconditionally returns `True`. |
 
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node) only ever talks to the third layer. It never references
 `onchain/aiken` at all.
@@ -111,7 +111,7 @@ Two things worth calling out beyond the table:
 
 - **`computation-thread.ak`** (`validators/computation-thread.ak`,
   `lib/midgard/computation-thread.ak`) is real on-chain logic with no
-  counterpart anywhere in the demo's `AlwaysSucceedsContract` /
+  counterpart anywhere in the testnet's `AlwaysSucceedsContract` /
   `MidgardValidators` type. The demo doesn't model computation threads at
   all today.
 - **`internals.ts`** (in both [`sundial-sdk/src`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk/src) and

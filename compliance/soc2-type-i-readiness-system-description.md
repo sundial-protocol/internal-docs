@@ -271,7 +271,7 @@ questions are closed. The table below summarizes the current posture.
 | BCP/DR | Detailed node recovery doc in [`bcp-dr-rto-rpo.md`](bcp-dr-rto-rpo.md) | Restore drills and mainnet-shaped objectives still required | Partial |
 | CI/security gates | Existing PR quality and security gates documented in [`../mainnet-readiness.md`](../mainnet-readiness.md) | Terraform plan-review and mainnet blast-radius files need stronger gating | Partial |
 | Public surface decisions | Mainnet-readiness doc identifies open issues clearly | Grafana exposure, API protection, and HTTPS-cutover decisions still open | Open |
-| Protocol correctness boundary | Explicitly caveated in [`../smart-contracts.md`](../smart-contracts.md) | Current demo/testnet environment should not be represented as protocol-level production assurance | Open |
+| Protocol correctness boundary | Explicitly caveated in [`../smart-contracts.md`](../smart-contracts.md) | Current testnet environment should not be represented as protocol-level production assurance | Open |
 
 ## Access Control And Privileged Operations
 
@@ -382,7 +382,7 @@ For control-readiness purposes, the node-level primary source is
 - backup posture for Postgres, Redis, and MPT/EFS state;
 - concrete recovery paths such as restart reconciliation, `/reset`, root-unit
   diagnostics, targeted repair, and restore workflows;
-- measured-evidence caveats separating testnet/demo measurements from
+- measured-evidence caveats separating testnet measurements from
   production claims.
 
 The protocol-level
@@ -419,7 +419,7 @@ requires careful treatment:
 | SOC-B4 | Alerting, paging, and production observability policy are not yet fully defined | Dashboards alone are not enough for operational readiness evidence |
 | SOC-B5 | Some public surface decisions, especially Grafana exposure and route protection, remain open | These affect confidentiality, attack surface, and reviewer confidence |
 | SOC-B6 | Testnet validation is strong, but mainnet-shaped topology and restore drills still need completion | Type I credibility improves when control design is anchored to the system users will actually face |
-| SOC-B7 | Current demo/testnet validator posture is not equivalent to production validator assurance | The scope must remain node-control readiness, not a full protocol assurance claim |
+| SOC-B7 | Current testnet validator posture is not equivalent to production validator assurance | The scope must remain node-control readiness, not a full protocol assurance claim |
 
 ## Evidence Index For A Future Audit Or Readiness Review
 
