@@ -17,16 +17,17 @@ do here touches real BTC, ADA, or money.
 
 The faucet at
 [sundialprotocol.com/testnet/faucet](https://www.sundialprotocol.com/testnet/faucet)
-gives out free **testnet sBTC** — Sundial's synthetic BTC token on Midgard,
+gives out free **testnet sBTC** — Sundial's synthetic BTC token on Sundial,
 Sundial's Layer 2. You'll receive it at an address on that L2, which uses the
-same address format as Cardano's testnet ("Preprod").
+same `addr_test1…` bech32 address format used by the settlement L1's testnet
+(the UTXO-based L1 testnet Sundial currently settles to).
 
 > Everything below is test-only. Never send real funds to a testnet address,
 > and don't reuse a wallet that holds real money for testnet activity.
 
 ## What you need
 
-Just a **Cardano-compatible wallet browser extension**, set to the testnet
+Just a **UTXO-compatible wallet browser extension**, set to the testnet
 network. You do not need any ADA, BTC, or other funds to get started — the
 faucet is how you receive your first testnet sBTC.
 
@@ -104,9 +105,9 @@ Refresh the balance in your wallet extension (still on the Testnet/Preprod
 network) — your testnet sBTC balance should reflect the grant amount shown
 in the confirmation.
 
-Note that this balance lives on Sundial's Midgard L2, not on Cardano's L1
-chain, so it will not show up on general-purpose Cardano block explorers like
-Cardanoscan. There isn't yet a public Midgard L2 block explorer during the
+Note that this balance lives on Sundial's Sundial L2, not on the settlement
+L1, so it will not show up on the settlement L1's own general-purpose block
+explorers. There isn't yet a public Sundial L2 block explorer during the
 testnet phase — your wallet's balance, and the claim confirmation shown on
 the faucet page, are the way to confirm a claim went through.
 
@@ -115,7 +116,7 @@ the faucet page, are the way to confirm a claim went through.
 For reference, or if you're comparing notes with the Sundial team:
 
 - **Faucet page:** `https://www.sundialprotocol.com/testnet/faucet`
-- **Testnet address format:** `addr_test1…` (same as Cardano Preprod)
+- **Testnet address format:** `addr_test1…` (UTXO-based L1 testnet format)
 - **Testnet sBTC units:** displayed amounts are in sBTC; 1,000,000 of the
   underlying base unit ("lovelace") = 1 sBTC, matching how the faucet page
   formats the grant amount.
@@ -137,7 +138,7 @@ a direct API call.
 Sundial's [dashboard](https://www.sundialprotocol.com/dashboard) shows what
 the full Bitcoin-yield product looks like: connecting a wallet, depositing,
 and tracking positions. On testnet it runs against **Bitcoin's testnet3
-network**, using a separate Bitcoin wallet (not the Cardano-style wallet from
+network**, using a separate Bitcoin wallet (not the UTXO-based L1 wallet from
 above) connected through the page's **Connect Wallet** button.
 
 > The dashboard is an early-stage, test-only preview — transactions and
@@ -158,7 +159,7 @@ Sundial's L2.
 Paying another address with your testnet sBTC means talking to Sundial's L2
 node directly, not just your wallet: something has to look up your spendable
 testnet sBTC and hand a signed transaction to Sundial's node, because a
-wallet's built-in "Send" only knows about the regular Cardano network, not
+wallet's built-in "Send" only knows about the regular settlement-L1 network, not
 Sundial's L2. The good news: you don't have to write that yourself. A small
 command-line tool in this repo, `midgard` (`demo/midgard-manager/packages/cli`),
 does it for you — no coding required, just commands typed into a terminal.
@@ -294,10 +295,10 @@ a few seconds and try again if you see "Not found" for a hash you just sent.
 
 ```
 $ node dist/bin.js node node-status --endpoint http://localhost:3010
-- Checking Midgard node status at http://localhost:3010...
+- Checking Sundial node status at http://localhost:3010...
 ✔ Node is online but not ready
 
-📊 Midgard Node Status
+📊 Sundial Node Status
 
 • Live: yes
 • Ready: no (not_ready)
@@ -306,7 +307,7 @@ $ node dist/bin.js node node-status --endpoint http://localhost:3010
 ```
 
 "Live" means the process is up; "Ready" additionally checks its database,
-cache, and Cardano L1 connection — a node can be live but not ready (as
+cache, and UTXO-based L1 connection — a node can be live but not ready (as
 above) while one of those is still starting up or misconfigured.
 
 ## Safety reminders

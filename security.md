@@ -15,7 +15,7 @@ or deploying the node; read this one if you're calling it.
 Before anything else: read
 [smart-contracts.md § The Demo Runs Against Placeholder Validators](./smart-contracts.md#the-demo-runs-against-placeholder-validators).
 In this demo deployment, on-chain script validation enforces none of
-Midgard's protocol rules — all correctness is enforced by
+Sundial's protocol rules — all correctness is enforced by
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)'s and [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk)'s own off-chain code. Don't
 point real value at demo contract addresses, and don't treat "the demo
 accepted my transaction" as evidence that the real protocol would too.
@@ -63,7 +63,7 @@ them, not just guess at them):
   credential — a syntactically valid bech32 string with no payment part
   (e.g. a pure stake address) is rejected.
 - `POST /submit` bodies: the entire body must be a valid hex string (and,
-  separately, must actually deserialize as a Cardano transaction once it
+  separately, must actually deserialize as a valid L1 transaction once it
   reaches the queue processor — hex-validity is checked synchronously at
   submit time, transaction-shape validity is not).
 - `/txs` pagination: `limit`/`offset` must be non-negative integers;
@@ -101,7 +101,7 @@ these rules ever seem to have drifted from this document.
 - The queue is at-least-once, not exactly-once: a transaction that fails
   processing is retried up to a bounded number of attempts before landing on
   a dead-letter stream. Build your own submissions to be safe to process
-  more than once (Cardano transactions are naturally idempotent by tx hash —
+  more than once (UTXO-based L1 transactions are naturally idempotent by tx hash —
   resubmitting identical CBOR doesn't double-spend).
 - On-chain flows that need a fresh, unused input as an anti-replay nonce
   (deposit, tx-order, and the state-queue's own initialization) follow a

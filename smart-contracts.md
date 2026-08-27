@@ -1,7 +1,7 @@
 # Smart Contract Interactions
 
 This document explains how [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node) and [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk) relate
-to the actual Midgard on-chain contracts — which validators exist, which ones
+to the actual Sundial on-chain contracts — which validators exist, which ones
 this demo deployment actually runs against, and how a transaction moves from
 an HTTP submission to an L1 commitment.
 
@@ -12,12 +12,12 @@ below.
 
 ## Three Representations Of The Protocol
 
-The repository contains three distinct representations of Midgard, at three
+The repository contains three distinct representations of Sundial, at three
 different levels of "real":
 
 | Layer | Location | What it is |
 | --- | --- | --- |
-| Formal spec | `technical-spec/Lean4Midgard/` (submodule, `github.com/input-output-hk/rnd-midgard`) | IOG's Lean4 formal verification of the protocol's state machines (StateQueue, Scheduler, OperatorDirectory, Settlement, Bridge/user-events, fraud-proof catalogue). A research artifact and correctness reference, not executable Cardano code. |
+| Formal spec | `technical-spec/Lean4Midgard/` (submodule, `github.com/input-output-hk/rnd-midgard`) | IOG's Lean4 formal verification of the protocol's state machines (StateQueue, Scheduler, OperatorDirectory, Settlement, Bridge/user-events, fraud-proof catalogue). A research artifact and correctness reference, not executable on-chain code. |
 | Real implementation | `onchain/aiken/` (validators + library code), `onchain/plutarch/` (parallel Haskell/Plutarch implementation) | The actual Aiken/Plutus V3 contracts with real validation logic: linked-list state queue, operator directory, scheduler, multi-step fraud proofs, settlement, user-events. |
 | What this demo runs | [`sundial-node/blueprints/always-succeeds`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/blueprints/always-succeeds) | A compiled Aiken project where every validator unconditionally returns `True`. |
 
@@ -35,7 +35,7 @@ that file has the same shape:
 ```aiken
 validator state_queue_spend {
   else(_) {
-    trace @"Midgard Demo – State Queue Spend"
+    trace @"Sundial – State Queue Spend"
     True
   }
 }
@@ -49,8 +49,8 @@ the 4 fraud-proof validators) — `blueprints/always-succeeds/README.md` is, in
 fact, Aiken's unmodified `aiken new` scaffold README, which is a good tell
 that nobody was meant to mistake this for production logic.
 
-**What this means concretely:** in this demo deployment, Cardano script
-validation enforces nothing about Midgard's protocol rules — not fee
+**What this means concretely:** in this demo deployment, the settlement L1's script
+validation enforces nothing about Sundial's protocol rules — not fee
 correctness, not UTxO validity, not double-spend prevention, not fraud-proof
 soundness. Every one of those properties is enforced entirely by
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)'s and [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk)'s own off-chain code (mempool
@@ -68,7 +68,7 @@ Practical implications:
   correctness, not protocol-level correctness — see
   [security.md](./security.md) for what that means for integrators.
 - Don't use behavior observed against this demo as evidence that the real
-  Midgard protocol (`onchain/aiken`) would accept or reject the same
+  Sundial protocol (`onchain/aiken`) would accept or reject the same
   transaction — the real validators are not in the loop here at all.
 
 One further caveat: `always-succeeds.ts` hard-codes
@@ -79,7 +79,7 @@ relying on always-succeeds-derived addresses outside Preprod.
 ## SDK-To-Validator Map
 
 [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk) (`@al-ft/midgard-sdk`) is the off-chain TypeScript library
-for building transactions that target these validators — the "Midgard
+for building transactions that target these validators — the "Sundial
 Typescript library for building operator and watcher transactions" per its
 own README. It has no HTTP server, no database, no queues; it's a pure
 tx-building/query library that takes a `LucidEvolution` instance and returns
@@ -131,7 +131,7 @@ HTTP contract itself.
    that exceed `TX_QUEUE_MAX_DELIVERY_ATTEMPTS`.
 2. **Parse & validate** — on a node running the `tx-processor` role,
    `fibers/tx-queue-processor.ts` claims batches off the stream, parses each
-   CBOR string into a Cardano transaction in a worker-thread pool
+   CBOR string into an L1 transaction in a worker-thread pool
    (`fibers/tx-parse-worker-pool.ts` → `workers/tx-parse.ts`), and validates
    it (including a minimum-fee check) before inserting into `MempoolDB`
    (`database/mempool.ts`).
@@ -198,7 +198,7 @@ applying regardless of which path you use.
 
 Note that a plain payment (spending L2 UTxOs to pay another address) is
 *not* one of the SDK's named protocol operations above — it's an ordinary
-Cardano transaction, not a deposit/withdrawal/tx-order. Don't go looking for
+L1 settlement transaction, not a deposit/withdrawal/tx-order. Don't go looking for
 a `transfer.ts` under `user-events/`; there isn't one. See
 [api.md § 2](./api.md#2-build-a-transaction-to-submit) for the pattern
 (a minimal Lucid `Provider` wired to the node's `GET /utxos` / `POST /submit`)

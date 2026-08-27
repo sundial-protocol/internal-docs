@@ -1,20 +1,20 @@
-# Midgard Demo Architecture
+# Sundial Architecture
 
-This document describes the Midgard project currently vendored under `demo/`.
+This document describes the Sundial project currently vendored under `demo/`.
 It is based on the active code in [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node),
 [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk), `demo/midgard-ts`, and `demo/midgard-manager`.
 
 ## Context
 
-Midgard is a Cardano L2 demo implementation. Sundial uses a fork
-of this Midgard stack as its Cardano L2 substrate to support Bitcoin yield
+Sundial is a UTXO-based L2 demo implementation (originally targeting Cardano). Sundial uses a fork
+of this Sundial stack as its UTXO-based L2 substrate to support Bitcoin yield
 product, whichs remain a separate Sundial protocol layer.
 
-Midgard has the following stack:
+Sundial has the following stack:
 
 - `midgard-node` is an Effect-based HTTP node and background worker process.
-- Cardano L1 is accessed through Lucid Evolution using either Kupmios or
-  Blockfrost.
+- The settlement L1 is accessed through the L1 provider library (Lucid
+  Evolution today) using either Kupmios or Blockfrost.
 - PostgreSQL stores the node's relational projection.
 - LevelDB-backed Merkle Patricia Trie stores keep the ledger and mempool MPTs.
 - The node exposes RPC-style HTTP endpoints, not a NestJS REST API.
@@ -25,13 +25,13 @@ that are not registered by the node today; those mismatches are documented in
 
 ## Project Layout
 
-The active Midgard folders are:
+The active Sundial folders are:
 
 | Folder                 | Purpose                                                                                                                                |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)    | Runtime node, HTTP RPC surface, PostgreSQL access, background fibers, block commitment/submission, L1 user-event sync, monitoring.     |
 | [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk)     | Off-chain SDK for building operator, watcher, initialization, state-queue, user-event, settlement, and fraud-proof transactions.       |
-| `demo/midgard-ts`      | Pure TypeScript binary codec and Cardano type round-trip helpers for Midgard blocks, transactions, outputs, deposits, and withdrawals. |
+| `demo/midgard-ts`      | Pure TypeScript binary codec and settlement-L1 ledger-type round-trip helpers for Sundial blocks, transactions, outputs, deposits, and withdrawals. |
 | `demo/midgard-manager` | CLI and transaction generator for configuring a node endpoint and generating/submitting test L2 transactions.                          |
 | `demo/schemes`         | Excalidraw protocol diagrams and an older project-structure sketch.                                                                    |
 
@@ -53,7 +53,7 @@ Local Docker Compose also starts:
 
 External dependencies are:
 
-- Cardano L1 provider through Lucid Evolution:
+- L1 provider through Lucid Evolution:
   - `Kupmios` mode uses Kupo plus Ogmios endpoints,
   - `Blockfrost` mode uses a Blockfrost API URL and key.
 - Operator wallets supplied as seed phrases.
@@ -65,7 +65,7 @@ External dependencies are:
 - pnpm 10 at `demo/` level, with older pnpm metadata in
   `demo/midgard-manager`
 - Effect, `@effect/platform`, `@effect/sql-pg`, `@effect/opentelemetry`
-- Lucid Evolution for Cardano access
+- Lucid Evolution for L1 access
 - PostgreSQL 15
 - LevelDB / memory-level for MPT storage
 - `@ethereumjs/mpt`
@@ -123,7 +123,7 @@ For route details, see [API](./api.md).
 
 For each queued CBOR hex string it:
 
-1. deserializes the Cardano transaction,
+1. deserializes the L1 transaction,
 2. computes its transaction hash,
 3. extracts spent inputs,
 4. extracts produced outputs,
@@ -135,8 +135,8 @@ database layer.
 
 ### L1 user-event sync
 
-`syncUserEventsFiber` periodically fetches Midgard user-event UTxOs from
-Cardano L1:
+`syncUserEventsFiber` periodically fetches Sundial user-event UTxOs from
+the settlement L1:
 
 - deposits,
 - transaction orders,
@@ -164,8 +164,8 @@ The commitment path:
 3. applies withdrawals, transaction orders, transaction requests, and deposits
    to the ledger model,
 4. computes ledger, deposit, withdrawal, and transaction roots,
-5. builds and signs a Cardano transaction that appends the new block to the
-   Midgard state queue,
+5. builds and signs an L1 transaction that appends the new block to the
+   Sundial state queue,
 6. stores the block in `BlocksDB` with `Unsubmitted` status.
 
 The worker also updates metrics for committed block count, transactions, event
@@ -196,7 +196,7 @@ The manual `GET /merge` endpoint runs the same action.
 
 `Reset.program` is development-oriented. It:
 
-- spends and burns Midgard authenticated validator UTxOs where possible,
+- spends and burns Sundial authenticated validator UTxOs where possible,
 - clears PostgreSQL tables used by the node projection,
 - deletes ledger and mempool MPT stores,
 - resets in-memory globals.
@@ -275,7 +275,7 @@ The current processing model is:
 3. The transaction queue processor deserializes it and inserts it into
    `MempoolDB`.
 4. L1 user-event sync periodically imports deposit, tx-order, and withdrawal
-   UTxOs from Cardano.
+   UTxOs from the settlement L1.
 5. Block commitment gathers eligible user events and transaction requests for
    an event interval, applies them to the ledger, computes roots, and stores an
    unsubmitted block commitment.
@@ -285,7 +285,7 @@ The current processing model is:
 7. Merge processing submits state-queue merge transactions to advance confirmed
    state.
 
-## Midgard SDK
+## Sundial SDK
 
 [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk) is the off-chain transaction construction library. It
 exports modules for:
@@ -314,7 +314,7 @@ For which validator each module targets, and how much of that is the real
 `onchain/aiken` implementation versus this demo's always-succeeds
 placeholders, see [smart-contracts.md](./smart-contracts.md).
 
-## Midgard TS Codec
+## Sundial TS Codec
 
 `demo/midgard-ts` is a pure TypeScript codec package. It defines binary
 encoding and decoding helpers for:
@@ -328,7 +328,7 @@ encoding and decoding helpers for:
 It is useful as a protocol-shape reference, but it is not the runtime HTTP
 server.
 
-## Midgard Manager
+## Sundial Manager
 
 `demo/midgard-manager` contains:
 

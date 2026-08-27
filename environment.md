@@ -1,7 +1,7 @@
-# Midgard Environment
+# Sundial Environment
 
 This document describes the environment and local configuration used by the
-Midgard demo under `demo/`.
+Sundial demo under `demo/`.
 
 ## Env Files
 
@@ -59,7 +59,7 @@ These variables are defined by [`sundial-node/.env.example`](https://github.com/
 | Variable                                       | Required by config | Default in code                 | Purpose                                                                                           |
 | ---------------------------------------------- | ------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `COMPOSE_PROJECT_NAME`                         | Compose only       | n/a                             | Docker Compose project name, set to `midgard` in the example.                                     |
-| `L1_PROVIDER`                                  | Yes                | none                            | Cardano provider mode: `Kupmios` or `Blockfrost`.                                                 |
+| `L1_PROVIDER`                                  | Yes                | none                            | UTXO-based L1 provider mode: `Kupmios` or `Blockfrost`.                                                 |
 | `L1_BLOCKFROST_API_URL`                        | Present as string  | none                            | Blockfrost API URL used only when `L1_PROVIDER=Blockfrost`.                                       |
 | `L1_BLOCKFROST_KEY`                            | Present as string  | none                            | Blockfrost API key used only when `L1_PROVIDER=Blockfrost`.                                       |
 | `L1_OGMIOS_KEY`                                | Present as string  | none                            | Ogmios endpoint/value passed to Lucid `Kupmios`.                                                  |
@@ -68,7 +68,7 @@ These variables are defined by [`sundial-node/.env.example`](https://github.com/
 | `L1_OPERATOR_SEED_PHRASE_FOR_BLOCK_COMMITMENT` | Yes                | none                            | Wallet seed used for block commitment transactions.                                               |
 | `L1_OPERATOR_SEED_PHRASE_FOR_MERGE_TX`         | Yes                | none                            | Wallet seed used for state-queue merge transactions.                                              |
 | `NETWORK`                                      | Yes                | none                            | Lucid network: `Mainnet`, `Preprod`, `Preview`, or `Custom`.                                      |
-| `PORT`                                         | No                 | `3000`                          | Midgard node HTTP RPC port.                                                                       |
+| `PORT`                                         | No                 | `3000`                          | Sundial node HTTP RPC port.                                                                       |
 | `WAIT_BETWEEN_BLOCK_COMMITMENTS`               | No                 | `1000`                          | Delay in milliseconds between block commitment fiber runs.                                        |
 | `WAIT_BETWEEN_BLOCK_SUBMISSIONS`               | No                 | `10000`                         | Delay in milliseconds between block submission fiber runs.                                        |
 | `WAIT_BETWEEN_USER_EVENT_FETCHES`              | No                 | `10000`                         | Delay in milliseconds between L1 user-event sync runs.                                            |

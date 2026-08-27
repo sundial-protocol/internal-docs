@@ -1,6 +1,6 @@
 # Testing
 
-This document summarizes the Midgard node test layers, the main entrypoints,
+This document summarizes the Sundial node test layers, the main entrypoints,
 and when to use each flow.
 
 ## Test Layers
@@ -27,11 +27,11 @@ thread call, clock, or other direct dependency so the behavior under test is one
 small unit of code. Unit tests should not prove SQL behavior, HTTP provider
 wiring, process startup, Docker composition, or live tool compatibility.
 
-Integration tests keep Midgard internals real and replace whole external tools
+Integration tests keep Sundial internals real and replace whole external tools
 at the harness boundary. Repository code, service wiring, SQL queries,
 serialization/parsing, transaction processing, MPT behavior, and Effect layers
 should run through production paths. The harness may replace PostgreSQL with a
-PostgreSQL-compatible test engine such as PGlite, replace Cardano provider
+PostgreSQL-compatible test engine such as PGlite, replace the L1 provider
 processes with localhost HTTP/RPC stubs, replace Lucid provider/wallet calls
 with one deterministic fake service layer, and replace filesystem stores with
 isolated temporary directories. This is the same kind of replacement as
@@ -106,7 +106,7 @@ Differences between these layers:
    public network, or external provider. Current candidates include pure helper
    behavior, transaction-builder orchestration with mocked fluent builders, and
    fraud-proof catalogue initialization logic.
-2. `test:integration`: Real internal wiring inside the Midgard node or SDK
+2. `test:integration`: Real internal wiring inside the Sundial node or SDK
    boundary, with external tools replaced at the harness boundary. Current
    candidates include Effect SQL repositories against PGlite or a disposable
    PostgreSQL-compatible test store, database initialization, transaction
@@ -114,12 +114,12 @@ Differences between these layers:
    provider stubs, and isolated LevelDB-backed MPT persistence.
 3. `test:cov`: Coverage-focused runs for API and node internals that also
    enforce per-file coverage checks. Slower than plain unit/integration.
-4. `test:e2e`: Live Dockerized Midgard node + Dockerized Postgres contract
+4. `test:e2e`: Live Dockerized Sundial node + Dockerized Postgres contract
    checks. Focused on runtime behavior, startup, CLI commands, HTTP contracts,
    and local persistence. Not a scalability, failover, replication, or
    production-infrastructure test.
 5. `test:system:all`: Cross-service runtime/system flows:
-   `test:system:e2e-emulator` (real Midgard node with emulator-backed L1
+   `test:system:e2e-emulator` (real Sundial node with emulator-backed L1
    boundary), and `test:system:obs` (telemetry/observability smoke flow).
 
 Local default `test:system` intentionally runs only:
@@ -184,7 +184,7 @@ as the include pattern, a 420 second timeout, and `bail: 3`.
 
 `npm run test:api:e2e` should:
 
-1. start the Dockerized Midgard node + Postgres stack,
+1. start the Dockerized Sundial node + Postgres stack,
 2. wait for health endpoints,
 3. run the live E2E spec,
 4. tear the stack down.
@@ -201,10 +201,10 @@ auto-select a free host port and export it for the host-side Vitest process.
 
 `npm run test:system:e2e-emulator` should run:
 
-- real Midgard node,
+- real Sundial node,
 - Dockerized Postgres,
 - emulator-backed L1/provider boundary,
-- the Midgard transaction, block commitment, merge, and submission flows that
+- the Sundial transaction, block commitment, merge, and submission flows that
   can run without external provider credentials.
 
 This is the main cross-service system test without a live external L1 provider.
@@ -216,7 +216,7 @@ missing, the wrapper should create a temporary runtime env file from
 ### Observability system flow
 
 `npm run test:system:obs` starts the observability Compose stack
-(Midgard node, Postgres, Grafana, Prometheus, Loki, Tempo, Promtail, cAdvisor)
+(Sundial node, Postgres, Grafana, Prometheus, Loki, Tempo, Promtail, cAdvisor)
 and then runs the dedicated smoke spec.
 
 Preferred local setup: `demo/midgard-node/.env` exists. If the local file is
@@ -226,7 +226,7 @@ missing, the wrapper should create a temporary runtime env file from
 ### Dedicated L1 provider runtime flow
 
 `npm run test:system:l1-provider` should run a dedicated runtime wrapper that
-starts the Dockerized Midgard node + Postgres stack and applies explicit L1
+starts the Dockerized Sundial node + Postgres stack and applies explicit L1
 provider configuration for the mode under test, for example:
 
 - `L1_PROVIDER=Kupmios`

@@ -21,7 +21,7 @@ These documents are currently split into the following categories:
 **Developer Docs** for [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node) and [`sundial-sdk`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-sdk) live at the
 top level of this repo: [api.md](./api.md) (the node's HTTP API),
 [smart-contracts.md](./smart-contracts.md) (how the node/SDK relate to the
-on-chain Midgard validators), [security.md](./security.md) (integrator-facing
+on-chain Sundial validators), [security.md](./security.md) (integrator-facing
 security best practices), and [environment.md](./environment.md)
 (configuration reference), alongside the broader [architecture.md](./architecture.md).
 

@@ -4,10 +4,10 @@
 provides a Docker Compose stack for local runtime + observability:
 
 - [`sundial-node/docker-compose.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docker-compose.yaml)
-  (Midgard node + Postgres + Prometheus + Loki + Promtail + cAdvisor +
+  (Sundial node + Postgres + Prometheus + Loki + Promtail + cAdvisor +
   Grafana + Tempo)
 - [`sundial-node/docker-compose.dev.yaml`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docker-compose.dev.yaml)
-  (Midgard node + Postgres only)
+  (Sundial node + Postgres only)
 
 ## Prerequisites
 
@@ -30,7 +30,7 @@ defaults in `.env.example` are:
 - `PROM_METRICS_PORT=9464`
 - `OLTP_EXPORTER_URL=http://tempo:4318/v1/traces`
 
-Note: the variable name is currently `OLTP_EXPORTER_URL` in the Midgard node
+Note: the variable name is currently `OLTP_EXPORTER_URL` in the Sundial node
 code and env file.
 
 ## Start and Stop
@@ -51,7 +51,7 @@ docker compose -f docker-compose.dev.yaml up -d --build
 docker compose -f docker-compose.dev.yaml down
 ```
 
-Follow Midgard node logs:
+Follow Sundial node logs:
 
 ```bash
 cd demo/midgard-node
@@ -74,8 +74,8 @@ docker compose run --rm midgard-node-tests
 
 ## Exposed Local Endpoints
 
-- Midgard node API: `http://localhost:3000`
-- Midgard node metrics: `http://localhost:9464/metrics`
+- Sundial node API: `http://localhost:3000`
+- Sundial node metrics: `http://localhost:9464/metrics`
 - Prometheus: `http://localhost:9090`
 - Loki: `http://localhost:3100`
 - cAdvisor: `http://localhost:8080`
@@ -83,7 +83,7 @@ docker compose run --rm midgard-node-tests
 - Tempo: `http://localhost:3200`
 - Tempo OTLP HTTP receiver: `http://localhost:4318`
 
-The Midgard node exposes routes such as:
+The Sundial node exposes routes such as:
 
 - `GET /tx`
 - `GET /txs`
@@ -107,7 +107,7 @@ The full Compose stack persists the following Docker volumes:
 - `grafana-data`
 - `tempo-data`
 
-The Midgard node service also bind-mounts `./db` into the container at
+The Sundial node service also bind-mounts `./db` into the container at
 `/app/db`.
 
 ## Smoke Checks
@@ -119,7 +119,7 @@ cd demo/midgard-node
 docker compose ps
 ```
 
-2. Confirm the Midgard node API is reachable:
+2. Confirm the Sundial node API is reachable:
 
 ```bash
 curl -fsS http://localhost:3000/stateQueue
@@ -145,7 +145,7 @@ Prometheus should include scrape jobs for:
 - `Loki`
 - `Tempo`
 
-5. Generate traffic by calling Midgard node endpoints and check:
+5. Generate traffic by calling Sundial node endpoints and check:
 
 - logs appear in Grafana Explore (Loki),
 - metrics appear in Prometheus/Grafana,
@@ -168,7 +168,7 @@ Prometheus should include scrape jobs for:
   - run `docker compose down -v`, then retry `docker compose up -d --build`.
 - No traces in Tempo:
   - verify `OLTP_EXPORTER_URL=http://tempo:4318/v1/traces` is active in the
-    Midgard node container.
+    Sundial node container.
 - Grafana opens but dashboards or data sources are missing:
   - verify the provisioning mounts under
     [`sundial-node/grafana`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node/grafana)

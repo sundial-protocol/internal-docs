@@ -1,4 +1,4 @@
-# Midgard Node API
+# Sundial Node API
 
 This document describes the HTTP surface exposed by
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node). It is based on [`sundial-node/src/commands/listen.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/src/commands/listen.ts)
@@ -6,7 +6,7 @@ and the manager/transaction-generator clients under `demo/midgard-manager`.
 
 ## Scope
 
-The Midgard node exposes unversioned RPC-style HTTP endpoints. It does not use
+The Sundial node exposes unversioned RPC-style HTTP endpoints. It does not use
 NestJS, Swagger, `/v1`, or request DTO classes.
 
 The server is built with `@effect/platform` and started by:
@@ -83,7 +83,7 @@ horizontally-scaled `api`-role deployment, don't expect `/tx`, `/txs`,
 | `GET`  | `/tx?tx_hash=<64-hex>`           | full only  | Look up a transaction CBOR from mempool first, then immutable storage.  |
 | `GET`  | `/txs?address=<bech32>&limit=&offset=` | full only | Return paginated address-history transaction CBORs for an address.     |
 | `GET`  | `/utxos?address=<bech32>`        | full only  | Return current mempool-ledger UTxOs for an address.                     |
-| `GET`  | `/block?header_hash=<56-hex>`    | full only  | Return transaction hashes mapped to a Midgard block header hash.        |
+| `GET`  | `/block?header_hash=<56-hex>`    | full only  | Return transaction hashes mapped to a Sundial block header hash.        |
 | `POST` | `/submit`                        | full, api  | Queue an L2 transaction CBOR (raw hex body) for processing.             |
 | `POST` | `/faucet/claims`                 | full, api  | Bearer-authenticated server-to-server testnet-ADA faucet claim.         |
 | `GET`  | `/init`                          | full only  | Mint the state-queue root unit and run genesis programs.                |
@@ -139,13 +139,13 @@ plain payment; see [smart-contracts.md](./smart-contracts.md)), so this
 section documents the pattern directly, backed by a real, typechecked
 example: [`midgard-sdk/examples/send-payment.ts`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-sdk/examples/send-payment.ts).
 
-**Why you can't just point a normal Cardano tx-building setup at Sundial.**
+**Why you can't just point a normal UTXO-L1 tx-building setup at Sundial.**
 Building a transaction with [Lucid Evolution](https://anastasia-labs.github.io/lucid-evolution)
 (the library `sundial-node` itself uses) requires a `Provider` — something
 that can look up spendable UTxOs, protocol parameters, and submit the
 finished transaction. The standard providers (Blockfrost, Kupmios, Maestro,
-or a wallet's own built-in backend) all talk to Cardano L1. None of them
-know Midgard's L2 ledger exists. So the UTxOs they'd return for your address
+or a wallet's own built-in backend) all talk to the settlement L1. None of them
+know Sundial's L2 ledger exists. So the UTxOs they'd return for your address
 won't include your L2 balance, and submitting through them would send the
 transaction to the wrong chain entirely.
 
@@ -197,13 +197,16 @@ Lucid Evolution supports either signing path, and both go through the same
   `lucid.selectWallet.fromPrivateKey(privateKey)`.
 - **Browser wallet extension** (end-user dApp — the same Eternl/Lace/etc.
   wallets from [testnet-user-guide.md](./testnet-user-guide.md#what-you-need)):
-  `lucid.selectWallet.fromAPI(cip30Api)`, where `cip30Api` is what
-  `window.cardano.<wallet>.enable()` resolves to.
+  `lucid.selectWallet.fromAPI(cip30Api)`, where `cip30Api` is what the
+  injected UTXO-wallet (CIP-30) API `window.cardano.<wallet>.enable()`
+  resolves to.
+
+  <!-- TODO: track a chain-neutral wallet-injection interface as UTXO wallets on other L1s appear. -->
 
 **A wallet extension's own `getUtxos()`/`submitTx()` will not work here.**
 CIP-30 only standardizes signing (`signTx`) and read access to *the wallet's
-own* configured Cardano backend — that backend is L1 (or L1-testnet), not
-Midgard's L2. Use the wallet purely for `signTx`; UTxO lookup and submission
+own* configured L1 backend — that backend is L1 (or L1-testnet), not
+Sundial's L2. Use the wallet purely for `signTx`; UTxO lookup and submission
 must go through the `Provider` above, talking to `sundial-node` directly.
 
 Putting it together (private-key variant; see the linked example for the
@@ -230,7 +233,7 @@ happens.
 POST /submit
 Content-Type: text/plain
 
-<hex-encoded-cardano-transaction-cbor>
+<hex-encoded-l1-transaction-cbor>
 ```
 
 The CBOR is the **entire raw request body** — not JSON, not a query
@@ -260,7 +263,7 @@ worker pool:
 
 1. claims/reads batches off the Redis stream (consumer group, with automatic
    reclaim of stale-pending entries),
-2. parses each CBOR string into a Cardano transaction in a worker-thread pool,
+2. parses each CBOR string into an L1 transaction in a worker-thread pool,
 3. computes the transaction hash and extracts spent inputs / produced outputs,
 4. validates it (including a min-fee check) and inserts it into `MempoolDB`,
    acknowledging the stream entry on success.
@@ -325,7 +328,7 @@ Invalid request (`400`):
 ### 5. Query spendable L2 UTxOs for an address
 
 ```http
-GET /utxos?address=<cardano-bech32-address>
+GET /utxos?address=<utxo-l1-bech32-address>
 ```
 
 Validation:
@@ -353,7 +356,7 @@ Success response:
 ### 6. Query address transaction history
 
 ```http
-GET /txs?address=<cardano-bech32-address>&limit=<n>&offset=<n>
+GET /txs?address=<utxo-l1-bech32-address>&limit=<n>&offset=<n>
 ```
 
 Address validation is the same three-tier scheme as `/utxos` above.
@@ -527,7 +530,7 @@ GET /reset
 Lock-guarded the same way as `/init`; concurrent calls get
 `409 {"error":"Reset already in progress"}`. Runs `Reset.program`:
 
-- spends and burns Midgard authenticated validator UTxOs where possible,
+- spends and burns Sundial authenticated validator UTxOs where possible,
 - clears node PostgreSQL projections,
 - deletes ledger and mempool MPT stores on disk,
 - resets in-memory globals.
@@ -545,7 +548,7 @@ Treat this route as destructive local tooling. It is not served by
 GET /stateQueue
 ```
 
-Fetches state-queue UTxOs from Cardano L1 via the SDK, logs a visual
+Fetches state-queue UTxOs from the settlement L1 via the SDK, logs a visual
 state-queue representation, and returns non-empty header keys.
 
 ```json

@@ -1,7 +1,7 @@
 # Telemetry
 
 [`sundial-node`](https://github.com/sundial-protocol/sundial-monorepo/tree/main/demo/midgard-node)
-exposes scrapeable Prometheus metrics from the Midgard node process when it
+exposes scrapeable Prometheus metrics from the Sundial node process when it
 is started with monitoring enabled.
 
 This document focuses on application metrics, tracing, and telemetry semantics
@@ -22,7 +22,7 @@ cAdvisor. The stack configuration lives under
 
 Example local scrape target:
 
-- Midgard node: `http://localhost:9464/metrics` when
+- Sundial node: `http://localhost:9464/metrics` when
   `PROM_METRICS_PORT=9464`
 
 Prometheus scrapes the node through the `midgard_nodes` job at
@@ -70,7 +70,7 @@ suffix.
 | `tx_count_total`                | Counter | none   | Submitted transactions accepted by `POST /submit`.                          | Dashboard throughput signal.           |
 | `tx_queue_size`                 | Gauge   | none   | Size of the in-memory transaction queue before processing.                  | Dashboard queue/backlog signal.        |
 | `mempool_tx_count`              | Gauge   | none   | Current number of transactions in `MempoolDB`.                              | Dashboard mempool signal.              |
-| `commit_block_count_total`      | Counter | none   | Number of committed Midgard blocks.                                         | Dashboard block production signal.     |
+| `commit_block_count_total`      | Counter | none   | Number of committed Sundial blocks.                                         | Dashboard block production signal.     |
 | `commit_block_tx_count_total`   | Counter | none   | Number of transaction requests included in committed blocks.                | Dashboard inclusion throughput signal. |
 | `commit_block_num_tx_count`     | Gauge   | none   | Transaction request count in the latest committed block.                    | Dashboard latest-block context.        |
 | `block_total_user_events_count` | Gauge   | none   | Deposit, withdrawal, and transaction-order event count in the latest block. | Dashboard latest-block context.        |
@@ -80,11 +80,11 @@ suffix.
 ## Infrastructure Metrics
 
 The local Docker Compose stack also scrapes metrics that do not originate inside
-the Midgard node code:
+the Sundial node code:
 
 | Metric                                   | Source                   | Meaning                                      | Default usage                    |
 | ---------------------------------------- | ------------------------ | --------------------------------------------- | --------------------------------- |
-| `up{job="midgard_nodes"}`                | Prometheus target health | Scrape health for the Midgard node exporter. | Availability and scrape context. |
+| `up{job="midgard_nodes"}`                | Prometheus target health | Scrape health for the Sundial node exporter. | Availability and scrape context. |
 | `container_memory_usage_bytes`           | cAdvisor                 | Container memory usage.                      | Grafana container dashboard.     |
 | `container_cpu_user_seconds_total`       | cAdvisor                 | Container CPU usage counter.                 | Grafana container dashboard.     |
 | `container_network_receive_bytes_total`  | cAdvisor                 | Container receive traffic counter.           | Grafana container dashboard.     |

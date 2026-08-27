@@ -17,7 +17,7 @@
 
 This document is a scalability and stress testing plan extension to the
 Sundial Master Test Plan. It defines the target-driven load validation approach
-for the Sundial testnet implementation based on the Midgard L2 node and
+for the Sundial testnet implementation based on the Sundial L2 node and
 transaction load generation tooling.
 
 The purpose of this plan is to establish a repeatable, evidence-based
@@ -79,7 +79,7 @@ The objectives of scalability and stress testing are to:
 
 The scope covers scalability and stress testing of the active l2 workspace:
 
-- `l2/midgard-node` as the running Sundial/Midgard node;
+- `l2/midgard-node` as the running Sundial/Sundial node;
 
 - `l2/midgard-manager/packages/tx-generator` as the transaction load generator,
   with extension or harness wrapping where required;
@@ -162,7 +162,7 @@ The test plan covers both testnet validation targets and mainnet performance tar
 ### 5.2 Load Driver Contract
 
 The load driver must be capable of generating the requested benchmark profile,
-regardless of whether that is achieved by extending Midgard Manager, adding a
+regardless of whether that is achieved by extending Sundial Manager, adding a
 separate harness, or running coordinated workers across multiple hosts.
 
 The load driver contract is:
@@ -249,7 +249,7 @@ The Grafana dashboard is defined in `l2/midgard-node/grafana/dashboard.json`.
 | Mempool depth             | `mempool_tx_count`                                              | Transactions held in `MempoolDB`.                                       | Rises under load and drains through commitments.                    |
 | Committed tx volume       | `commit_block_tx_count_total`                                   | Transactions included in committed blocks.                              | Catches up to durable accepted volume after processing lag.         |
 | Commit drain rate         | `rate(commit_block_tx_count_total[$__rate_interval])`           | Committed transactions per second.                                      | Meets or approaches durable acceptance rate over sustained windows. |
-| Committed blocks          | `commit_block_count_total`                                      | Number of committed Midgard blocks.                                     | Continues increasing under load.                                    |
+| Committed blocks          | `commit_block_count_total`                                      | Number of committed Sundial blocks.                                     | Continues increasing under load.                                    |
 | Block commit rate         | `rate(commit_block_count_total[$__rate_interval])`              | Committed blocks per second.                                            | Stable and non-zero during active commitment windows.               |
 | Transactions per block    | `commit_block_txs_per_block`                                    | Tx count in the most recently committed block.                          | Stable within expected block sizing behavior.                       |
 | Block commitment duration | `commit_block_duration_seconds`                                 | Latest block commitment worker duration.                                | Does not trend upward beyond benchmark threshold.                   |
@@ -432,7 +432,7 @@ testnet environment with the observability stack enabled.
 
 Required services:
 
-- Midgard node started with monitoring enabled;
+- Sundial node started with monitoring enabled;
 
 - PostgreSQL runtime database;
 
@@ -447,7 +447,7 @@ Required services:
 - Loki and Tempo available for log and trace evidence where configured;
 
 - reporting-grade load driver or harness installed and validated. This may use
-  Midgard Manager internally, but the harness owns run control, evidence
+  Sundial Manager internally, but the harness owns run control, evidence
   collection, and report output.
 
 Required environment evidence:
