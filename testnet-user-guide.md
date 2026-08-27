@@ -155,14 +155,159 @@ depositing and tracking yield positions on **Bitcoin's testnet3 network**,
 which is a separate flow from the testnet sBTC balance you just claimed on
 Sundial's L2.
 
-Paying another address with your testnet sBTC today means talking to
-Sundial's L2 node directly, not just your wallet: your wallet extension
-signs the transaction, but something has to look up your spendable testnet
-sBTC and hand the signed transaction to Sundial's node, because a wallet's
-built-in "Send" only knows about the regular Cardano network, not Sundial's
-L2. That's a developer-facing flow today, not a point-and-click one — see
-[api.md](./api.md#2-build-a-transaction-to-submit) if you or someone on your
-team wants to build it.
+Paying another address with your testnet sBTC means talking to Sundial's L2
+node directly, not just your wallet: something has to look up your spendable
+testnet sBTC and hand a signed transaction to Sundial's node, because a
+wallet's built-in "Send" only knows about the regular Cardano network, not
+Sundial's L2. The good news: you don't have to write that yourself. A small
+command-line tool in this repo, `midgard` (`demo/midgard-manager/packages/cli`),
+does it for you — no coding required, just commands typed into a terminal.
+(If you *are* integrating this into your own app instead, see
+[api.md](./api.md#2-build-a-transaction-to-submit).)
+
+> The transcripts below were captured against a local test instance, so the
+> addresses, keys, and hashes are all real but only meaningful in that
+> instance. Point `--endpoint` at the public node from
+> [Testnet network details](#testnet-network-details) (or a node you're
+> running yourself) and you'll see the same output shapes with your own
+> values. The CLI defaults to `http://localhost:3000` if `--endpoint` is
+> omitted.
+
+### Install and build the CLI
+
+From a checkout of this repo:
+
+```
+$ cd demo/midgard-manager/packages/cli
+$ pnpm install
+$ pnpm build
+```
+
+Every command below is `node dist/bin.js <command>` — the same binary is also
+installable as `midgard` (see the package's `bin` field), and `pnpm start
+<command>` rebuilds automatically if you're editing it. The CLI prints a
+banner on every run; it's trimmed from the transcripts below after the first
+one.
+
+### Create a wallet
+
+```
+$ node dist/bin.js wallet create alice
+┌─ 🌞 SUNDIAL MANAGER 
+│ CLI Tool for Testnet
+└────────────
+✓ Created wallet: alice
+Address: addr_test1vqfyf53z2m7wd2nlqys7cq9wvnryv2eeqd6xpqkx0pj9r5c8skzr8
+Private Key: ed25519_sk...vtpwa
+
+Fund it from the faucet, then check its balance with:
+$ midgard wallet balance alice
+```
+
+This generates a fresh keypair and prints its `addr_test1…` address — the
+same address format as the browser-wallet flow above. `wallet import <name>
+--private-key <ed25519_sk...>` registers a key you already have instead of
+generating a new one. `wallet list` and `wallet address <name>` show what
+you've created:
+
+```
+$ node dist/bin.js wallet list
+Available wallets:
+ • alice — addr_test1vqfyf53z2m7wd2nlqys7cq9wvnryv2eeqd6xpqkx0pj9r5c8skzr8
+ • bob — addr_test1vpmkj5p7v93m2j5m5laqj27w2u6veqcgnfrt3zt50cvkunqs0rnyz
+```
+
+The private key never leaves your machine — it's stored in plaintext at
+`demo/midgard-manager/config/wallets/default.json`, which is git-ignored.
+Treat it exactly like the "test-only" wallets earlier in this guide: fine for
+testnet, never for anything holding real value.
+
+### Fund it, then check the balance
+
+Copy the printed address into the faucet, same as [Step
+2](#step-2--request-testnet-sbtc-from-the-faucet) above. Before funding,
+`wallet balance` genuinely shows zero:
+
+```
+$ node dist/bin.js wallet balance alice
+Balance for alice (addr_test1vqfyf53z2m7wd2nlqys7cq9wvnryv2eeqd6xpqkx0pj9r5c8skzr8):
+  0.000000 sBTC
+  (0 lovelace across 0 UTxO(s))
+```
+
+After a faucet claim lands, the same command shows the real balance:
+
+```
+$ node dist/bin.js wallet balance alice
+Balance for alice (addr_test1vqfyf53z2m7wd2nlqys7cq9wvnryv2eeqd6xpqkx0pj9r5c8skzr8):
+  100.000000 sBTC
+  (100000000 lovelace across 1 UTxO(s))
+```
+
+### Send funds
+
+```
+$ node dist/bin.js send --from alice --to addr_test1vpmkj5p7v93m2j5m5laqj27w2u6veqcgnfrt3zt50cvkunqs0rnyz --amount 1.5
+Sending 1.5 sBTC from alice (addr_test1vqfyf53z2m7wd2nlqys7cq9wvnryv2eeqd6xpqkx0pj9r5c8skzr8) to addr_test1vpmkj5p7v93m2j5m5laqj27w2u6veqcgnfrt3zt50cvkunqs0rnyz...
+✓ Sent 1.5 sBTC to addr_test1vpmkj5p7v93m2j5m5laqj27w2u6veqcgnfrt3zt50cvkunqs0rnyz
+Transaction hash: 17b6ed8627fd65838003ca00d4c4ebd78a4494e0f9baf256cfffd60c982842af
+Check it with: midgard tx-lookup 17b6ed8627fd65838003ca00d4c4ebd78a4494e0f9baf256cfffd60c982842af
+```
+
+`--amount` is in sBTC (matching the faucet's display unit), not lovelace.
+Signing happens with the locally stored private key above — this is *not*
+the CIP-30 browser-wallet flow from earlier in this guide, it's the
+raw-private-key path meant for a terminal tool.
+
+Trying to send before funding the wallet fails honestly, not silently:
+
+```
+$ node dist/bin.js send --from alice --to addr_test1vpmkj5p7v93m2j5m5laqj27w2u6veqcgnfrt3zt50cvkunqs0rnyz --amount 1.5
+Sending 1.5 sBTC from alice (addr_test1vqfyf53z2m7wd2nlqys7cq9wvnryv2eeqd6xpqkx0pj9r5c8skzr8) to addr_test1vpmkj5p7v93m2j5m5laqj27w2u6veqcgnfrt3zt50cvkunqs0rnyz...
+Failed to send: { Complete: Your wallet does not have enough funds to cover the required assets: {
+  "lovelace": "1657977n"
+}
+      Or it contains UTxOs with reference scripts; which are excluded from coin selection. }
+Is the node running? Check with: midgard node node-status
+```
+
+That error is Lucid Evolution's own coin-selection message, passed through
+as-is — a bit raw, but it means exactly what it says: fund the wallet first.
+
+### Look up a transaction
+
+```
+$ node dist/bin.js tx-lookup 17b6ed8627fd65838003ca00d4c4ebd78a4494e0f9baf256cfffd60c982842af
+Not found: 17b6ed8627fd65838003ca00d4c4ebd78a4494e0f9baf256cfffd60c982842af
+It may still be queued for processing — try again in a few seconds.
+```
+
+A transaction hash from `send` isn't necessarily visible right away —
+`POST /submit` (which `send` uses under the hood) just queues it; a
+background worker on the node parses and validates it shortly after. Give it
+a few seconds and try again if you see "Not found" for a hash you just sent.
+
+### If something's not working
+
+`node node-status` checks the node directly and is the first thing to run if
+`send` or `wallet balance` can't connect:
+
+```
+$ node dist/bin.js node node-status --endpoint http://localhost:3010
+- Checking Midgard node status at http://localhost:3010...
+✔ Node is online but not ready
+
+📊 Midgard Node Status
+
+• Live: yes
+• Ready: no (not_ready)
+• Failing subsystems: l1Provider
+• Endpoint: http://localhost:3010
+```
+
+"Live" means the process is up; "Ready" additionally checks its database,
+cache, and Cardano L1 connection — a node can be live but not ready (as
+above) while one of those is still starting up or misconfigured.
 
 ## Safety reminders
 
