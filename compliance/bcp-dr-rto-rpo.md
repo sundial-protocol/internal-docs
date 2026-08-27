@@ -28,7 +28,7 @@ In scope:
 - Redis Streams ingress queue and dead-letter stream.
 - Postgres protocol tables and projections.
 - LevelDB-backed Merkle-Patricia-Trie state mounted on EFS in AWS.
-- L1 provider and Cardano state-queue interaction needed for reset, repair,
+- L1 provider and settlement-L1 state-queue interaction needed for reset, repair,
   commitment, merge, and cold-start seeding.
 - Operator recovery endpoints: `/reset`,
   `/stateQueue/root-unit-diagnostics`, and

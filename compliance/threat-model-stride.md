@@ -11,7 +11,7 @@ here are the stable node architecture:
 
 ```text
 client / API ingress -> Redis Streams -> tx-processor -> Postgres/MPT state ->
-sequencer fibers -> L1 provider -> Cardano L1
+sequencer fibers -> L1 provider -> settlement L1
 ```
 
 The same boundaries exist whether `NETWORK` is `Preprod`, `Preview`, `Custom`,
@@ -115,7 +115,7 @@ Primary data flow:
 | B4 Mempool persistence | tx-processor | Postgres + MempoolLedgerDB | Validated work mutates durable state. |
 | B5 Sequencer state | sequencer | Postgres + MPT | Off-chain state becomes committed block material. |
 | B6 L1 provider | sequencer / Lucid | Blockfrost or Kupo/Ogmios | Internal state depends on external chain data/submission response. |
-| B7 L1 chain | L1 provider | Cardano network | Signed commitment becomes public chain state. |
+| B7 L1 chain | L1 provider | settlement-L1 network | Signed commitment becomes public chain state. |
 | B8 Ops plane | operators / CI / Terraform | AWS ECS/RDS/Redis/EFS/Secrets | Humans and automation can change runtime, secrets, and persistence. |
 
 ## STRIDE Analysis
@@ -226,7 +226,7 @@ blocks back to `UNSUBMITTED`.
 Mainnet control state at this boundary requires alerts for stuck statuses,
 periodic Postgres/MPT/L1 consistency checks, and tested restore procedures.
 
-### B6-B7: L1 provider and Cardano L1
+### B6–B7: L1 provider and settlement L1
 
 The node trusts the configured provider for chain reads and submission. The
 implementation treats provider failures as expected operational conditions in

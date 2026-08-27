@@ -21,7 +21,7 @@ for the Sundial node runtime dependency closure as of the generated date.
 | Included package | `demo/midgard-sdk` / `@al-ft/midgard-sdk@0.1.0` |
 | Included package | `demo/midgard-ts` / `midgard-ts@0.1.0` |
 | Dependency classes | Production `dependencies` only; `devDependencies` excluded except where a package is currently declared under `dependencies` |
-| Excluded | OS packages, Docker base images, Cardano node/provider services, registry license metadata, vulnerability status, and generated build output |
+| Excluded | OS packages, Docker base images, settlement-L1 node/provider services, registry license metadata, vulnerability status, and generated build output |
 
 ## Source Integrity
 
@@ -121,6 +121,8 @@ vulnerability attestation, license opinion, or operating-environment inventory.
 ## Resolved Runtime Inventory
 
 This flattened inventory is derived from the lockfile `importers`, `packages`, and `snapshots` sections. Multiple versions of the same package are listed separately because they are distinct resolved components. Optional platform packages are retained when present in the lockfile closure.
+
+The `cardano`-named packages below (CML, Ogmios, `cardano-sdk`, message-signing) are the current settlement-L1 client libraries. Package identifiers are reproduced verbatim as the lockfile resolves them — an SBOM is a verifiable factual inventory and must not be edited. A follow-up tracks abstracting these UTXO-L1 client libraries behind the chain-neutral `L1_PROVIDER` interface so per-network equivalents can be swapped; the inventory will then naturally list fewer settlement-L1-specific packages.
 
 | Component | Version | Source |
 | --- | --- | --- |

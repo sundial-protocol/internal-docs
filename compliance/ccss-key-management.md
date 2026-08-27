@@ -142,8 +142,8 @@ following approved patterns:
 | Pattern | When acceptable | Required properties |
 | --- | --- | --- |
 | External threshold signer / MPC provider | Preferred for institutional operation and material-value wallets. | No complete private key or seed phrase is available to the node. Signing policy enforces role, destination, amount, network, and transaction type. Provider is assessed as a service provider under CCSS aspect 2.03. |
-| HSM-backed signer service | Acceptable where Cardano signing support and transaction-policy checks are available. | Private key remains non-exportable. Node receives only a signer reference and authorization credential. Signing operations are logged. |
-| Cardano multi-signer / script-controlled wallet | Acceptable where the protocol flow supports the required script and latency profile. | No one signer can unilaterally move material funds. Key shards or signer devices are distributed across distinct operators. |
+| HSM-backed signer service | Acceptable where the settlement L1's signing support (Ed25519 / CIP-1852-style key derivation) and transaction-policy checks are available. | Private key remains non-exportable. Node receives only a signer reference and authorization credential. Signing operations are logged. |
+| Settlement-L1 multi-signer / script-controlled wallet | Acceptable where the protocol flow supports the required script and latency profile. | No one signer can unilaterally move material funds. Key shards or signer devices are distributed across distinct operators. |
 | Temporary hot-key exception | Only for a time-boxed, low-value pilot approved in writing. | Dedicated limited-funds key, explicit expiry, documented risk acceptance, no institutional custody claim, and migration plan to threshold/HSM/multisig custody. |
 
 The default mainnet design is threshold/MPC or HSM-backed signing for
@@ -171,7 +171,7 @@ key identifier, policy identifier, and short-lived authorization credentials.
 The signer or custody layer must reject transactions that violate approved
 policy before signing:
 
-- network must be Cardano mainnet only for mainnet keys;
+- network must be the settlement-L1 mainnet only for mainnet keys;
 - destination/script addresses must match the approved protocol deployment;
 - transaction purpose must match the key role, such as commitment, merge, or
   operator administration;

@@ -183,7 +183,7 @@ It stores:
 
 - Claim IDs.
 - Idempotency keys.
-- Recipient Cardano addresses.
+- Recipient settlement-L1 addresses.
 - Caller-provided IP hashes for rate limiting.
 - Claim amounts in lovelace.
 - Faucet transaction IDs.

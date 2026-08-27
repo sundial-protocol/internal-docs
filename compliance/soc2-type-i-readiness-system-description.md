@@ -39,7 +39,7 @@ In scope:
   deployment posture, CI/security gates, secrets handling, and operational
   readiness.
 - PostgreSQL, Redis Streams, Merkle-Patricia-Trie state, EFS-backed storage,
-  L1 provider dependencies, and Cardano L1 interactions as they affect node
+  L1 provider dependencies, and settlement-L1 interactions as they affect node
   operation.
 - Existing testnet validation, baseline security, controlled-load, telemetry,
   disaster-recovery, and key-management documentation.
@@ -176,7 +176,7 @@ Sundial's layered model.
 ![Sundial L2 architecture](../architecture/layers/L2/L2Components.png)
 
 Use this diagram when the reader needs a protocol-facing view of block
-producers, archive/data-availability relationships, Cardano settlement, state
+producers, archive/data-availability relationships, L1 settlement, state
 queue, watchers, and end-user interactions.
 
 ### Reused Flow Diagrams
@@ -186,7 +186,7 @@ The existing sequence diagrams in
 are the canonical interaction-flow diagrams for:
 
 - Bitcoin bridge and release flows;
-- Cardano deposit and withdrawal flows;
+- settlement-L1 deposit and withdrawal flows;
 - user-facing integration points between UI, L1, L2, and service layers.
 
 The existing role-focused images are useful as appendices or diligence support:
@@ -208,7 +208,7 @@ model already used in the STRIDE threat model:
 
 ```text
 client / API ingress -> Redis Streams -> tx-processor -> Postgres/MPT state ->
-sequencer fibers -> L1 provider -> Cardano L1
+sequencer fibers -> L1 provider -> settlement L1
 ```
 
 This boundary model is stable across `Preprod`, `Preview`, `Custom`, and
