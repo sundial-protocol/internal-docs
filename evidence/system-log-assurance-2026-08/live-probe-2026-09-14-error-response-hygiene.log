@@ -1,0 +1,12 @@
+# Live confirmation of B3 (error-response hygiene) and the undefined-route/500 observation.
+# Collected 2026-09-14 by curl against the public testnet RPC endpoint.
+
+$ curl -s -o /dev/null -w "HTTP %{http_code}\n" https://rpc.testnet.sundialprotocol.com/this-path-does-not-exist-evidence-check
+HTTP 500
+$ curl -s https://rpc.testnet.sundialprotocol.com/this-path-does-not-exist-evidence-check
+{"error":"Something went wrong"}
+
+$ curl -s -o /dev/null -w "HTTP %{http_code}\n" https://rpc.testnet.sundialprotocol.com/health/ready
+HTTP 200
+$ curl -s https://rpc.testnet.sundialprotocol.com/health/ready
+{"status":"ready"}

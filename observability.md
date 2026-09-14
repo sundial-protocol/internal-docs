@@ -95,8 +95,12 @@ The Sundial node exposes routes such as:
 - `GET /reset`
 - `GET /stateQueue`
 - `POST /submit`
+- `GET /health/live`
+- `GET /health/ready`
 
-There is no dedicated health endpoint in this stack.
+`GET /health/live` and `GET /health/ready` are the liveness / readiness probes
+used by the cloud deployment's target group; `/health/ready` returning `200` is
+the cutover verification signal.
 
 ## Persistence
 
@@ -109,6 +113,39 @@ The full Compose stack persists the following Docker volumes:
 
 The Sundial node service also bind-mounts `./db` into the container at
 `/app/db`.
+
+### Retention
+
+Metrics and logs are retained long enough for retrospective reliability
+reporting over a closed calendar window (see
+[`telemetry.md`](telemetry.md#retention--persistence) and
+[`reliability-reporting.md`](reliability-reporting.md)):
+
+- Prometheus TSDB: `PROMETHEUS_RETENTION_TIME` (default `120d`) with a
+  `PROMETHEUS_RETENTION_SIZE` cap (default `40GB`), set on the `prometheus`
+  service `command` in `docker-compose.yaml`. Cloud: `prometheus_retention`
+  / `prometheus_retention_size` in `envs/testnet.tfvars`.
+- Loki: `retention_period: 120d` with compactor retention enabled
+  (`loki-config.yaml`). Cloud: `loki_retention_days`.
+- Tempo: `block_retention: 72h` (`tempo.yaml`); no Tempo in the cloud.
+
+In the cloud deployment, Prometheus and Loki data are on EFS access points
+(`infra/aws/terraform/platform/efs.tf`), not ECS `host_path` volumes, so
+retention survives task rescheduling.
+
+### Prometheus snapshot
+
+The admin API is enabled locally (`--web.enable-admin-api`) and in the cloud
+(kept on the private subnet). To freeze a point-in-time copy of the TSDB — for
+an evidence bundle or an offline investigation:
+
+```bash
+# Trigger a snapshot (writes under <tsdb>/snapshots/<name>)
+curl -s -XPOST http://localhost:9090/api/v1/admin/tsdb/snapshot
+
+# Local: the snapshot dir is inside the prometheus-data volume
+docker compose exec prometheus ls /prometheus/snapshots
+```
 
 ## Smoke Checks
 
@@ -134,9 +171,12 @@ curl -fsS 'http://localhost:9090/api/v1/targets?state=active'
 Prometheus should include scrape jobs for:
 
 - `prometheus`
-- `midgard_nodes`
+- `sundial_nodes`
 - `cadvisor`
 - `tempo`
+
+`curl -fsS http://localhost:9090/api/v1/rules` should list the `slo_*` groups
+loaded from `rules/` — regenerate them with `pnpm run slo:check` if missing.
 
 4. Open Grafana at `http://localhost:3001` and verify the provisioned data
    sources:
@@ -144,6 +184,13 @@ Prometheus should include scrape jobs for:
 - `prometheus`
 - `Loki`
 - `Tempo`
+
+and the provisioned dashboards under the `Services` folder:
+
+- the main ops dashboard (`dashboard.json`)
+- `reliability.json` — the SLO / reliability dashboard (SLI success ratios vs
+  objectives, latency quantiles, error-budget-remaining and burn rate,
+  availability, restarts, block cadence)
 
 5. Generate traffic by calling Sundial node endpoints and check:
 
@@ -155,7 +202,7 @@ Prometheus should include scrape jobs for:
 
 - `docker compose up` fails with missing env values:
   - verify `demo/midgard-node/.env` exists and is populated.
-- `midgard_nodes` metrics target is down in Prometheus:
+- `sundial_nodes` metrics target is down in Prometheus:
   - confirm the full `docker-compose.yaml` stack is running, not
     `docker-compose.dev.yaml`.
   - confirm `PROM_METRICS_PORT=9464` and that the node starts with

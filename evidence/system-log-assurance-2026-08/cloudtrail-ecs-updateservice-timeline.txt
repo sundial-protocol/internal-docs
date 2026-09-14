@@ -1,0 +1,15 @@
+# CloudTrail management events, EventName=UpdateService, ECS cluster sundial-node-testnet
+# Source: aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=UpdateService
+# Window queried: 2026-05-03 - 2026-09-01 (CloudTrail Event History default retention is 90 days from
+# query time, 2026-09-14, so this only reaches back to ~2026-06-16; no UpdateService calls were found
+# before 2026-07-29, meaning the deployed node ran unchanged from its initial deployment (~2026-05-29,
+# per earliest ALB access log and CloudWatch log stream) through 2026-07-29.
+
+2026-07-29T14:03:52+00:00  UpdateService  by=vicgenin
+2026-07-29T14:23:13+00:00  UpdateService  by=vicgenin
+2026-07-29T14:54:05+00:00  UpdateService  by=vicgenin
+2026-07-29T15:27:35+00:00  UpdateService  by=vicgenin
+2026-07-30T06:43:15+00:00  UpdateService  by=vicgenin
+2026-07-30T09:58:18+00:00  UpdateService  by=vicgenin
+2026-07-30T13:49:16+00:00  UpdateService  by=vicgenin
+2026-08-17T08:57:16+00:00  UpdateService  by=vicgenin

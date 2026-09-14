@@ -1,0 +1,52 @@
+# Diagnosis of §10 P2 (reliability-report / Prometheus cross-check) - why it stays open,
+# and what specifically is broken. Collected 2026-09-14.
+
+## 1. There IS a public, intentional, anonymous path to Grafana
+
+task_obs.tf sets on the Grafana task:
+  GF_AUTH_ANONYMOUS_ENABLED=true
+  GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+  GF_AUTH_DISABLE_LOGIN_FORM=true
+By design, for a public testnet dashboard - confirmed intentional, not a misconfiguration.
+
+$ curl -s https://dashboard.testnet.sundialprotocol.com/api/health
+{"database":"ok","version":"12.3.2","commit":"df2547decd50d14defa20ec9ce1c2e2bc9462d72"}
+
+$ curl -s https://dashboard.testnet.sundialprotocol.com/api/datasources
+[{"id":1,"uid":"prometheus","orgId":1,"name":"Prometheus","type":"prometheus",
+  "access":"proxy","url":"http://localhost:9090","isDefault":true,"readOnly":true}]
+
+## 2. But the datasource proxy fails - Prometheus is unreachable from Grafana's own container
+
+$ curl -s https://dashboard.testnet.sundialprotocol.com/api/datasources/uid/prometheus/health
+{"message":"Post \"http://localhost:9090/api/v1/query\": dial tcp 127.0.0.1:9090:
+  connect: connection refused - There was an error returned querying the Prometheus API.",
+ "status":"ERROR"}
+
+## 3. Prometheus itself is healthy - this is NOT "Prometheus is down"
+
+$ aws ecs describe-services --cluster sundial-node-testnet --services prometheus grafana --region us-west-2
+prometheus: desired=1 running=1 pending=0, deployment PRIMARY/COMPLETED
+grafana:    desired=1 running=1 pending=0, deployment PRIMARY/COMPLETED
+
+## 4. Root cause: Grafana's datasource URL falls back to the wrong hostname
+
+Prometheus and Grafana are separate ECS *services* (not containers in one task), each
+registered in Cloud Map under the private DNS namespace (`aws_service_discovery_service.prometheus`,
+name "prometheus", in task_obs.tf). Grafana's container-init script is supposed to resolve
+Prometheus's real address via `aws servicediscovery discover-instances` at startup
+(task_obs.tf ~line 394-405) and set:
+  PROMETHEUS_URL="http://$PROM_IP:$PROM_PORT"
+But it falls back to a hardcoded default if that lookup returns nothing:
+  PROMETHEUS_URL="$${PROMETHEUS_URL:-http://localhost:9090}"
+`localhost:9090` can never work in this topology (Prometheus isn't colocated with Grafana),
+so whatever caused the discovery lookup to come back empty at Grafana's last startup left it
+permanently pointed at a dead address until the task is redeployed/restarted.
+
+## Conclusion for §10 P2
+
+Not a credentials gap - a live, diagnosed infra bug independent of this report. Even with the
+public anonymous Grafana path (which does work for the Grafana API itself), the Prometheus
+proxy behind it is broken, and Prometheus has no separate public/ALB route of its own
+(alb.tf only host-header-routes api_domain and grafana_domain). P2 cannot be closed from
+outside the VPC until this is fixed. New action item: SLA-10 (see report §11).

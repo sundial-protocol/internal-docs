@@ -1,0 +1,61 @@
+# ALB access-log analysis scoped to Host: rpc.testnet.sundialprotocol.com
+# Source: s3://sundial-node-testnet-alb-logs-.../alb/AWSLogs/810809345231/elasticloadbalancing/us-west-2/
+# Window: 2026-05-29 (first ALB log) - 2026-08-31, full scan of 9,364 log objects (~23MB)
+# Rationale: the public ALB also receives constant internet background-scanner traffic that
+# resolves rpc.testnet.sundialprotocol.com via DNS and sends a matching Host header, so Host
+# alone does not separate real usage from scanning - path does (see below).
+
+Total requests to genuine RPC host: 665
+
+Overall status code totals:
+  500: 538
+  200: 90
+  301: 18
+  503: 10
+  460: 4
+  504: 2
+  400: 2
+  404: 1
+
+-- documented API paths: 104 requests, 83 returned 200 --
+     52  GET /utxos -> 200
+     18  GET /stateQueue/root-unit-diagnostics -> 200
+     11  GET /health/ready -> 200
+      8  GET /stateQueue/root-unit-diagnostics -> 503
+      2  GET /health/ready -> 503
+      2  GET /reset -> 504
+      2  GET /stateQueue/root-unit-diagnostics -> 460
+      2  GET /utxos -> 400
+      1  GET /tx -> 404
+      1  HEAD /health/ready -> 301
+      1  GET /tx -> 200
+      1  GET /reset -> 500
+      1  GET /health/ready -> 460
+      1  GET /reset -> 460
+      1  GET /reset -> 200
+
+  Non-200 breakdown: 17 fall inside the 2026-07-30 deployment window (460/500/503/504,
+  see alb-2026-07-30-deploy-blip-and-2026-08-05-malformed-input.log); the remaining 4 are
+  correct-behavior responses unrelated to any defect: 2x400 malformed bech32 address on
+  /utxos (2026-08-05), 1x404 nonexistent tx_hash on /tx (2026-07-27), 1x301 HEAD redirect
+  on /health/ready.
+
+-- undefined/unmatched routes: 561 requests across 157 distinct paths --
+   (root, static assets, and scanner/exploit probes: wp-login.php, .git/config, .env*,
+    actuator/env, xmlrpc.php, migadmin/..., remote/logincheck, etc. - see SLA-07)
+   (top 15 shown)
+    155  GET /
+     37  GET /favicon.ico
+     16  GET /.git/config
+     10  GET /api/v2/static/not.found
+     10  GET /remote/logincheck
+     10  GET /lang/legacy/filechecksum
+     10  GET /migadmin/lang/legacy/legacy/filechecksum
+      9  GET /.env
+      9  GET /fonts/ftnt-icons.woff
+      9  GET /login
+      9  GET /lang/custom/sbin/init
+      8  GET /static/lang//custom/sbin/init
+      8  GET /static/lang/custom/sbin/init
+      7  GET /lang//custom/sbin/init
+      5  GET /.env.production

@@ -535,6 +535,8 @@ The following deliverables will be produced as part of the validation cycle:
 
 - evidence package containing logs, metrics, reports, and references
 
+- system log assurance report (stability & security from logs) — see [`system-log-assurance-report.md`](system-log-assurance-report.md)
+
 - final validation report
 
 - residual risk summary

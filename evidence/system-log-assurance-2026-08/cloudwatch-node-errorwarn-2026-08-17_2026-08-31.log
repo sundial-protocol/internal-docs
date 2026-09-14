@@ -1,0 +1,23 @@
+# Source: CloudWatch /ecs/sundial-node-testnet, log streams sundial-node/sundial-node/*
+# Query:  fields @timestamp, @logStream, @message | filter @message like /ERROR|WARN/ | sort @timestamp asc
+# Window: 2026-08-17T00:00:00Z - 2026-09-01T00:00:00Z (the sub-range still inside the 30-day CloudWatch
+#         retention window as of collection time, 2026-09-14). All 19 matches shown; full scan, no sampling.
+2026-08-17T09:04:30.772Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [09:04:30.772] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-17T09:04:31.783Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [09:04:31.782] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-18T10:41:53.452Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [10:41:53.452] WARN (#51):
+2026-08-19T05:53:10.348Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [05:53:10.348] WARN (#51):
+2026-08-20T18:13:34.693Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [18:13:34.693] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-26T00:35:01.202Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [00:35:01.201] ERROR (#3249606): GET /health/ready - readiness failure: l1Provider
+2026-08-26T00:35:11.188Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [00:35:11.187] ERROR (#3249649): GET /health/ready - readiness failure: l1Provider
+2026-08-26T00:35:31.224Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [00:35:31.224] ERROR (#3249720): GET /health/ready - readiness failure: l1Provider
+2026-08-27T11:33:30.954Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [11:33:30.954] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:24.990Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:24.990] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:26.000Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:26.000] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:27.011Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:27.010] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:28.019Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:28.019] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:29.029Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:29.028] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:30.043Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:30.042] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-27T22:43:31.052Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [22:43:31.052] WARN (#49): Commitment backpressure active: skipping cycle because pending_unsubmitted_blocks=1 exceeded threshold=0
+2026-08-31T13:05:58.723Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [13:05:58.723] ERROR (#5320929): GET /health/ready - readiness failure: l1Provider
+2026-08-31T18:50:44.374Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [18:50:44.373] ERROR (#5410422): GET /health/ready - readiness failure: l1Provider
+2026-08-31T18:50:54.739Z sundial-node/sundial-node/2b46ef9cf60746e987a647796c84fdd9 [18:50:54.738] ERROR (#5410465): GET /health/ready - readiness failure: l1Provider

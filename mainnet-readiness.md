@@ -38,6 +38,9 @@ they gate a node release.
 | Local/runtime env vars, `.env` contract | [`environment.md`](environment.md) | Which vars are secrets in AWS vs. `.env` locally |
 | Functional/integration/regression/load testing | [`master-test-plan.md`](master-test-plan.md), [`testing.md`](testing.md) | Mainnet-only additions not in MTP scope |
 | Monitoring stack setup | [`observability.md`](observability.md) | Alerting/paging readiness, not just dashboards |
+| Metrics/logs retention, SLO definitions | [`telemetry.md`](telemetry.md) | Whether the retention horizon and SLO objectives are sized for mainnet |
+| Retrospective SLO/reliability reporting | [`reliability-reporting.md`](reliability-reporting.md) | Report cadence and sign-off as a launch-evidence gate |
+| Log-based stability & security evidence | [`system-log-assurance-report.md`](system-log-assurance-report.md) | Whether the log evidence extends to the deployed mainnet node and its retention |
 | AWS topology, Terraform layout, env matrix | [`sundial-node/docs/aws.md`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docs/aws.md) | Where that doc and the checked-in tfvars have drifted, and what's still undecided |
 | Operational commands (bootstrap/apply/logs/restart) | [`sundial-node/docs/deployment.md`](https://github.com/sundial-protocol/sundial-monorepo/blob/main/demo/midgard-node/docs/deployment.md) | The go/no-go gate around using those commands against mainnet |
 | Protocol-level disaster recovery, escape hatch | [`architecture/disaster-plan.md`](architecture/disaster-plan.md) | Nothing — reference only |
@@ -311,6 +314,9 @@ Gaps) is unresolved, or while any row above is unsigned.
 - [Architecture](architecture.md)
 - [Environment](environment.md)
 - [Observability](observability.md)
+- [Telemetry](telemetry.md)
+- [Reliability Reporting](reliability-reporting.md)
+- [System Log Assurance Report](system-log-assurance-report.md)
 - [Testing](testing.md)
 - [Master Test Plan](master-test-plan.md)
 - [Scalability & Stress Test Report](scalability-stress-test-report.md)
