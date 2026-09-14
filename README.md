@@ -30,4 +30,9 @@ people using the deployed testnet (wallet setup, the sBTC faucet, the demo
 dashboard) rather than integrating with or operating the node — no
 programming background assumed.
 
+**Support Docs**: [support-runbook.md](./support-runbook.md) is the internal
+companion to the testnet user guide — support tiers, a triage playbook for
+faucet/wallet/CLI/API issues, and an escalation matrix, for whoever is
+staffing adopter-facing support rather than for the adopter themselves.
+
 Catalyst Reviewers, please see the [Milestone 4 Hyperlink Guide](./reports/milestone-guides/M4%20Hyperlink%20Guide.pdf) for a handy overview of where to find everything you're looking for.
